@@ -6,69 +6,33 @@ public class ShapeDrawTest : MonoBehaviour
     [SerializeField] private Texture2D shapeTexture;
     [SerializeField] private List<Vector2> shapeOutline;
 
+    [SerializeField] private List<Texture2D> mountainLevelTextures;
+
+    private MapJSONBuilder mJSONb;
+
+    int MAP_SIZE = 1000;
+
     void Awake()
     {
+        mJSONb = new MapJSONBuilder(new Vector2(MAP_SIZE, MAP_SIZE));
+
         if (shapeOutline != null && shapeTexture != null)
         {
-            OutlineUtils.CreateShapeObject("TestShape", shapeOutline, shapeTexture, this.transform, Color.black, 0.1f);
+            PerlinMountainGenerator pmg = new PerlinMountainGenerator(new PerlinNoise(0, MAP_SIZE, MAP_SIZE, 0), MAP_SIZE, MAP_SIZE, 0.025f, 0.35f, 0.55f, 0.6f, 0.7f);
 
+            List<MountainData> mountains = pmg.Generate(null);
 
-            //RunTest();
-        }
-    }
-
-    void RunTest()
-    {
-        Vector2 mapSize = new Vector2(100, 100);
-        MapJSONBuilder builder = new MapJSONBuilder(mapSize);
-
-        // --- BIOME ---
-        BiomeData biome = new BiomeData
-        {
-            biomeID = 1,
-            outline = GenerateRandomPolygon(
-                center: new Vector2(50, 50),
-                radius: 30,
-                pointCount: 8
-            )
-        };
-        builder.AddBiome(biome);
-
-        // --- MOUNTAIN ---
-        MountainData mountain = new MountainData
-        {
-            elevationLevel = 3,
-            outline = GenerateRandomPolygon(
-                center: new Vector2(50, 50),
-                radius: 12,
-                pointCount: 6
-            )
-        };
-        builder.AddMountain(mountain);
-
-        // --- OBJECTS ---
-        for (int i = 0; i < 5; i++)
-        {
-            ObjectData obj = new ObjectData
+            for(int i=0; i<mountains.Count; i++)
             {
-                objectID = Random.Range(1, 4), // tree / rock / etc
-                position = new Vector2(
-                    Random.Range(20, 80),
-                    Random.Range(20, 80)
-                )
-            };
+                GameObject newDrawnMount = OutlineUtils.CreateShapeObject($"Mountain_{i}", mountains[i].outline, mountainLevelTextures[mountains[i].elevationLevel + 1], this.transform, Color.black, 0.1f);
+                mJSONb.AddMountain(mountains[i]);
 
-            builder.AddObject(obj);
+                float z = -mountains[i].elevationLevel * 0.1f;
+                newDrawnMount.transform.localPosition += Vector3.forward * z;
+            }
         }
 
-        // --- SAVE ---
-        string path = Application.dataPath + "/test_map.json";
-        builder.SaveToJson(path);
-        Debug.Log("Map saved to: " + path);
-
-        // --- LOAD ---
-        MapData loaded = MapJSONBuilder.LoadFromJson(path);
-        Debug.Log($"Loaded map: Biomes={loaded.biomes.Count}, Mountains={loaded.mountains.Count}, Objects={loaded.objects.Count}");
+        mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json");
     }
 
     // Helper: simple radial polygon (convex, good for testing)

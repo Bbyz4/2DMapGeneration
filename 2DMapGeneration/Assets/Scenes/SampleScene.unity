@@ -392,6 +392,12 @@ MonoBehaviour:
   - {x: 20, y: 0}
   - {x: 15, y: 15}
   - {x: 0, y: 10}
+  mountainLevelTextures:
+  - {fileID: 2800000, guid: 48b675eeaf53bb348937f95352c651e5, type: 3}
+  - {fileID: 2800000, guid: 5f3eb27741725d144a7187b77f4d4384, type: 3}
+  - {fileID: 2800000, guid: 0aa338e4e31b6aa4f86bb099fb6af420, type: 3}
+  - {fileID: 2800000, guid: a76fae72bbf8f134bb7ffb056dd74d00, type: 3}
+  - {fileID: 2800000, guid: 0517261fef15d114eacd9bb43aa33bb1, type: 3}
 --- !u!4 &1341983722
 Transform:
   m_ObjectHideFlags: 0
