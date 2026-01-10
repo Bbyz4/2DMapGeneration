@@ -86,7 +86,7 @@ public static class OutlineUtils
         return value > 0 ? 1 : 2;
     }
 
-    public static Mesh CreateMeshFromOutline(List<Vector2> outline, Rect textureUvRect)
+    private static Mesh CreateMeshFromOutline(List<Vector2> outline, Rect textureUvRect)
     {
         if (outline == null || outline.Count < 3)
         {
@@ -109,10 +109,11 @@ public static class OutlineUtils
         {
             vertices[i] = new Vector3(outline[i].x, outline[i].y, 0);
             
-            // Simple UV mapping: maps the shape's bounding box to the 0-1 texture space
-            float xNorm = Mathf.InverseLerp(minX, maxX, outline[i].x);
-            float yNorm = Mathf.InverseLerp(minY, maxY, outline[i].y);
-            uvs[i] = new Vector2(xNorm, yNorm);
+            float tileSize = 1f; // world units per texture tile
+            uvs[i] = new Vector2(
+                outline[i].x / tileSize,
+                outline[i].y / tileSize
+            );
         }
 
         // 2. Triangulation
@@ -130,5 +131,64 @@ public static class OutlineUtils
         mesh.RecalculateBounds();
 
         return mesh;
+    }
+
+    public static GameObject CreateShapeObject(string name, List<Vector2> outline, Texture2D shapeTexture, Transform parent, Color? borderColor = null, float borderWidth = 0.05f)
+    {
+        // 1. Create the new GameObject
+        GameObject shapeObj = new GameObject(name);
+        
+        // 2. Set the position (Optional: child it to this transform to keep the hierarchy clean)
+        shapeObj.transform.SetParent(parent);
+        shapeObj.transform.localPosition = Vector3.zero;
+
+        // 3. Add required components
+        MeshFilter meshFilter = shapeObj.AddComponent<MeshFilter>();
+        MeshRenderer meshRenderer = shapeObj.AddComponent<MeshRenderer>();
+
+        // 4. Generate the Mesh
+        Mesh generatedMesh = OutlineUtils.CreateMeshFromOutline(outline, new Rect(0, 0, 1, 1));
+        meshFilter.mesh = generatedMesh;
+
+        // 5. Setup the Material
+        Shader defaultShader = Shader.Find("Universal Render Pipeline/Unlit");
+        if (defaultShader == null) defaultShader = Shader.Find("Unlit/Texture");
+        if (defaultShader == null) defaultShader = Shader.Find("Standard");
+
+        Material shapeMaterial = new Material(defaultShader);
+        
+        if (shapeMaterial.HasProperty("_BaseMap"))
+            shapeMaterial.SetTexture("_BaseMap", shapeTexture);
+        else
+            shapeMaterial.mainTexture = shapeTexture;
+
+        meshRenderer.material = shapeMaterial;
+
+        // 6. Optional border
+        if (borderColor.HasValue)
+        {
+            LineRenderer line = shapeObj.AddComponent<LineRenderer>();
+
+            line.useWorldSpace = false;
+            line.loop = true;
+            line.positionCount = outline.Count;
+
+            Vector3[] positions = new Vector3[outline.Count];
+            for (int i = 0; i < outline.Count; i++)
+            {
+                positions[i] = new Vector3(outline[i].x, outline[i].y, -0.01f);
+            }
+
+            line.SetPositions(positions);
+
+            line.startWidth = borderWidth;
+            line.endWidth = borderWidth;
+
+            line.material = new Material(Shader.Find("Sprites/Default"));
+            line.startColor = borderColor.Value;
+            line.endColor = borderColor.Value;
+        }
+
+        return shapeObj;
     }
 }

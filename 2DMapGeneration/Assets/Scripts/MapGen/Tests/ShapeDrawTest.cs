@@ -10,42 +10,87 @@ public class ShapeDrawTest : MonoBehaviour
     {
         if (shapeOutline != null && shapeTexture != null)
         {
-            // You can now call this multiple times to create multiple shapes
-            CreateShapeObject("TestShape", shapeOutline);
+            OutlineUtils.CreateShapeObject("TestShape", shapeOutline, shapeTexture, this.transform, Color.black, 0.1f);
+
+
+            //RunTest();
         }
     }
 
-    public GameObject CreateShapeObject(string name, List<Vector2> outline)
+    void RunTest()
     {
-        // 1. Create the new GameObject
-        GameObject shapeObj = new GameObject(name);
-        
-        // 2. Set the position (Optional: child it to this transform to keep the hierarchy clean)
-        shapeObj.transform.SetParent(this.transform);
-        shapeObj.transform.localPosition = Vector3.zero;
+        Vector2 mapSize = new Vector2(100, 100);
+        MapJSONBuilder builder = new MapJSONBuilder(mapSize);
 
-        // 3. Add required components
-        MeshFilter meshFilter = shapeObj.AddComponent<MeshFilter>();
-        MeshRenderer meshRenderer = shapeObj.AddComponent<MeshRenderer>();
+        // --- BIOME ---
+        BiomeData biome = new BiomeData
+        {
+            biomeID = 1,
+            outline = GenerateRandomPolygon(
+                center: new Vector2(50, 50),
+                radius: 30,
+                pointCount: 8
+            )
+        };
+        builder.AddBiome(biome);
 
-        // 4. Generate the Mesh
-        Mesh generatedMesh = OutlineUtils.CreateMeshFromOutline(outline, new Rect(0, 0, 1, 1));
-        meshFilter.mesh = generatedMesh;
+        // --- MOUNTAIN ---
+        MountainData mountain = new MountainData
+        {
+            elevationLevel = 3,
+            outline = GenerateRandomPolygon(
+                center: new Vector2(50, 50),
+                radius: 12,
+                pointCount: 6
+            )
+        };
+        builder.AddMountain(mountain);
 
-        // 5. Setup the Material
-        Shader defaultShader = Shader.Find("Universal Render Pipeline/Unlit");
-        if (defaultShader == null) defaultShader = Shader.Find("Unlit/Texture");
-        if (defaultShader == null) defaultShader = Shader.Find("Standard");
+        // --- OBJECTS ---
+        for (int i = 0; i < 5; i++)
+        {
+            ObjectData obj = new ObjectData
+            {
+                objectID = Random.Range(1, 4), // tree / rock / etc
+                position = new Vector2(
+                    Random.Range(20, 80),
+                    Random.Range(20, 80)
+                )
+            };
 
-        Material shapeMaterial = new Material(defaultShader);
-        
-        if (shapeMaterial.HasProperty("_BaseMap"))
-            shapeMaterial.SetTexture("_BaseMap", shapeTexture);
-        else
-            shapeMaterial.mainTexture = shapeTexture;
+            builder.AddObject(obj);
+        }
 
-        meshRenderer.material = shapeMaterial;
+        // --- SAVE ---
+        string path = Application.dataPath + "/test_map.json";
+        builder.SaveToJson(path);
+        Debug.Log("Map saved to: " + path);
 
-        return shapeObj;
+        // --- LOAD ---
+        MapData loaded = MapJSONBuilder.LoadFromJson(path);
+        Debug.Log($"Loaded map: Biomes={loaded.biomes.Count}, Mountains={loaded.mountains.Count}, Objects={loaded.objects.Count}");
+    }
+
+    // Helper: simple radial polygon (convex, good for testing)
+    List<Vector2> GenerateRandomPolygon(Vector2 center, float radius, int pointCount)
+    {
+        List<Vector2> points = new();
+
+        float angleStep = 360f / pointCount;
+
+        for (int i = 0; i < pointCount; i++)
+        {
+            float angle = angleStep * i * Mathf.Deg2Rad;
+            float r = radius * Random.Range(0.7f, 1.1f);
+
+            Vector2 p = center + new Vector2(
+                Mathf.Cos(angle) * r,
+                Mathf.Sin(angle) * r
+            );
+
+            points.Add(p);
+        }
+
+        return points;
     }
 }
