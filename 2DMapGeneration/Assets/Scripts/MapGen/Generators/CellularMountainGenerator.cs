@@ -1,16 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PerlinMountainGenerator : IMountainGenerator
+public class CellularMountainGenerator : IMountainGenerator
 {
-    private PerlinNoise noise;
+    private CellularAutomata automata;
     private int width;
     private int height;
-    private float scale;
 
-    private float a, b, c, d;
+    private int maxHeight;
+    private int a, b, c, d;
 
-    private int Classify(float h)
+    private int Classify(int h)
     {
         if(h <= a) return -1; 
         if(h <= b) return 0;  
@@ -115,29 +115,109 @@ public class PerlinMountainGenerator : IMountainGenerator
         return OrderEdges(edges);
     }
 
-    public PerlinMountainGenerator(
-        PerlinNoise noise,
+    private List<Vector2> OrderEdges(List<Edge> edges)
+    {
+        List<Vector2> outline = new List<Vector2>();
+
+        Edge current = edges[0];
+        outline.Add(current.a);
+        outline.Add(current.b);
+        edges.RemoveAt(0);
+
+        while (edges.Count > 0)
+        {
+            Vector2 last = outline[outline.Count - 1];
+
+            int index = edges.FindIndex(e => e.a == last || e.b == last);
+            if (index == -1)
+                break;
+
+            Edge next = edges[index];
+            edges.RemoveAt(index);
+
+            outline.Add(next.a == last ? next.b : next.a);
+        }
+
+        outline.RemoveAt(outline.Count - 1);
+
+        return outline;
+    }
+
+    public CellularMountainGenerator(
         int width,
         int height,
-        float scale,
-        float a,
-        float b,
-        float c,
-        float d)
+        int a,
+        int b,
+        int c,
+        int d,
+        int maxHeight
+    )
     {
-        this.noise = noise;
         this.width = width;
         this.height = height;
-        this.scale = scale;
+
 
         this.a = a;
         this.b = b;
         this.c = c;
         this.d = d;
+
+        this.maxHeight = maxHeight;
+
+        automata = new CellularAutomata(0, width-1, height-1, 0, maxHeight);
+
+        //Setting the edges as height 0
+        for(int i=0; i<height; i++)
+        {
+            automata.SetCell(0, i, 0);
+            automata.SetCell(width-1, i, 0);
+        }
+
+        for(int i=0; i<width; i++)
+        {
+            automata.SetCell(i, 0, 0);
+            automata.SetCell(i, height-1, 0);
+        }
     }
 
     public List<MountainData> Generate(BiomeData biome)
     {
+        List<MountainData> result = new List<MountainData>();
+
+        automata.Randomize();
+
+        automata.SetTransitionRule((grid, x, y) =>
+        {
+            int width = grid.GetLength(0);
+            int height = grid.GetLength(1);
+
+            int sum = 0;
+            int count = 0;
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                    {
+                        sum += grid[nx, ny];
+                        count++;
+                    }
+                }
+            }
+
+            float avg = (float)sum / count;
+
+            float alpha = 0.25f; 
+            int newValue = Mathf.RoundToInt(grid[x, y] + alpha * (avg - grid[x, y]));
+
+            return newValue;
+        });
+
+        automata.ApplyTransition(100);
+
         int[,] elevationMap = new int[width, height];
         bool[,] visited = new bool[width, height];
 
@@ -146,12 +226,10 @@ public class PerlinMountainGenerator : IMountainGenerator
         {
             for(int y = 0; y < height; y++)
             {
-                float h = noise.Sample((float)x * scale, (float)y * scale);
+                int h = automata.GetCell(x, y);
                 elevationMap[x, y] = Classify(h);
             }
         }
-
-        List<MountainData> result = new List<MountainData>();
 
         // 2. Extract connected regions
         for(int x = 0; x < width; x++)
@@ -185,33 +263,4 @@ public class PerlinMountainGenerator : IMountainGenerator
 
         return result;
     }
-
-    private List<Vector2> OrderEdges(List<Edge> edges)
-    {
-        List<Vector2> outline = new List<Vector2>();
-
-        Edge current = edges[0];
-        outline.Add(current.a);
-        outline.Add(current.b);
-        edges.RemoveAt(0);
-
-        while (edges.Count > 0)
-        {
-            Vector2 last = outline[outline.Count - 1];
-
-            int index = edges.FindIndex(e => e.a == last || e.b == last);
-            if (index == -1)
-                break;
-
-            Edge next = edges[index];
-            edges.RemoveAt(index);
-
-            outline.Add(next.a == last ? next.b : next.a);
-        }
-
-        outline.RemoveAt(outline.Count - 1);
-
-        return outline;
-    }
-
 }

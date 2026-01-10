@@ -10,7 +10,7 @@ public class ShapeDrawTest : MonoBehaviour
 
     private MapJSONBuilder mJSONb;
 
-    int MAP_SIZE = 1000;
+    int MAP_SIZE = 100;
 
     void Awake()
     {
@@ -21,6 +21,10 @@ public class ShapeDrawTest : MonoBehaviour
             PerlinMountainGenerator pmg = new PerlinMountainGenerator(new PerlinNoise(0, MAP_SIZE, MAP_SIZE, 0), MAP_SIZE, MAP_SIZE, 0.025f, 0.35f, 0.55f, 0.6f, 0.7f);
 
             List<MountainData> mountains = pmg.Generate(null);
+
+            /* CellularMountainGenerator cmg = new CellularMountainGenerator(MAP_SIZE, MAP_SIZE, 5, 12, 13, 14, 20);
+
+            List<MountainData> mountains = cmg.Generate(null); */
 
             for(int i=0; i<mountains.Count; i++)
             {
