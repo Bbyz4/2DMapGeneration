@@ -1,25 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class CellularMountainGenerator : IMountainGenerator
+public class CellularCaveGenerator : IMountainGenerator
 {
     private CellularAutomata automata;
+
     private int width;
     private int height;
 
-    private int maxHeight;
-    private int a, b, c, d;
-
-    private int Classify(int h)
-    {
-        if(h <= a) return -1; 
-        if(h <= b) return 0;  
-        if(h <= c) return 1;  
-        if(h <= d) return 2; 
-        return 3;             
-    }
-
-    private List<Vector2Int> FloodFill(
+private List<Vector2Int> FloodFill(
         int startX,
         int startY,
         int level,
@@ -143,40 +132,27 @@ public class CellularMountainGenerator : IMountainGenerator
         return outline;
     }
 
-    public CellularMountainGenerator(
+    public CellularCaveGenerator(
         int width,
-        int height,
-        int a,
-        int b,
-        int c,
-        int d,
-        int maxHeight
+        int height
     )
     {
         this.width = width;
         this.height = height;
 
+        automata = new CellularAutomata(0, width-1, height-1, 0, 2);
 
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-
-        this.maxHeight = maxHeight;
-
-        automata = new CellularAutomata(0, width-1, height-1, 0, maxHeight);
-
-        //Setting the edges as height 0
+        //Setting the edges as 1 (wall)
         for(int i=0; i<height; i++)
         {
-            automata.SetCell(0, i, 0);
-            automata.SetCell(width-1, i, 0);
+            automata.SetCell(0, i, 1);
+            automata.SetCell(width-1, i, 1);
         }
 
         for(int i=0; i<width; i++)
         {
-            automata.SetCell(i, 0, 0);
-            automata.SetCell(i, height-1, 0);
+            automata.SetCell(i, 0, 1);
+            automata.SetCell(i, height-1, 1);
         }
     }
 
@@ -200,7 +176,7 @@ public class CellularMountainGenerator : IMountainGenerator
                 {
                     int nx = x + dx;
                     int ny = y + dy;
-                    if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && (nx!=x || ny!=y))
                     {
                         sum += grid[nx, ny];
                         count++;
@@ -208,15 +184,25 @@ public class CellularMountainGenerator : IMountainGenerator
                 }
             }
 
-            float avg = (float)sum / count;
+            int newValue;
 
-            float alpha = 0.3f; 
-            int newValue = Mathf.RoundToInt(grid[x, y] + alpha * (avg - grid[x, y]));
+            //Classic cavegen
+
+            if(grid[x,y] == 1)
+            {
+                //Wall stays wall if >=4 neighbours are wall
+                newValue = (sum >= 4) ? 1 : 0;
+            }
+            else
+            {
+                //Floor becomes wall if >=5 neighbours are wall
+                newValue = (sum >= 5) ? 1 : 0;
+            }
 
             return newValue;
         });
 
-        automata.ApplyTransition(20);
+        automata.ApplyTransition(8);
 
         int[,] elevationMap = new int[width, height];
         bool[,] visited = new bool[width, height];
@@ -227,7 +213,7 @@ public class CellularMountainGenerator : IMountainGenerator
             for(int y = 0; y < height; y++)
             {
                 int h = automata.GetCell(x, y);
-                elevationMap[x, y] = Classify(h);
+                elevationMap[x, y] = h; // no need to classify, 1 is already mountain and 0 is already empty
             }
         }
 

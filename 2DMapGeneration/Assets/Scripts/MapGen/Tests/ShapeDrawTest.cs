@@ -10,7 +10,7 @@ public class ShapeDrawTest : MonoBehaviour
 
     private MapJSONBuilder mJSONb;
 
-    int MAP_SIZE = 100;
+    int MAP_SIZE = 200;
 
     void Awake()
     {
@@ -18,13 +18,13 @@ public class ShapeDrawTest : MonoBehaviour
 
         if (shapeOutline != null && shapeTexture != null)
         {
-            PerlinMountainGenerator pmg = new PerlinMountainGenerator(new PerlinNoise(0, MAP_SIZE, MAP_SIZE, 0), MAP_SIZE, MAP_SIZE, 0.025f, 0.35f, 0.55f, 0.6f, 0.7f);
+            /* PerlinMountainGenerator pmg = new PerlinMountainGenerator(new PerlinNoise(0, MAP_SIZE, MAP_SIZE, 0), MAP_SIZE, MAP_SIZE, 0.025f, 0.35f, 0.55f, 0.6f, 0.7f);
 
-            List<MountainData> mountains = pmg.Generate(null);
+            List<MountainData> mountains = pmg.Generate(null); */
 
-            /* CellularMountainGenerator cmg = new CellularMountainGenerator(MAP_SIZE, MAP_SIZE, 5, 12, 13, 14, 20);
+            CellularCaveGenerator cvg = new CellularCaveGenerator(MAP_SIZE, MAP_SIZE);
 
-            List<MountainData> mountains = cmg.Generate(null); */
+            List<MountainData> mountains = cvg.Generate(null);
 
             for(int i=0; i<mountains.Count; i++)
             {
