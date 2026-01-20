@@ -38,7 +38,7 @@ public class ShapeDrawTest : MonoBehaviour
                 newDrawnMount.transform.localPosition += Vector3.forward * z;
             }
 
-            IObjectGenerator pog = new PoissonObjectGenerator(MAP_SIZE, MAP_SIZE, 1.5f, 30, 1);
+            IObjectGenerator pog = new PoissonObjectGenerator(MAP_SIZE, MAP_SIZE, 1.5f, 30, 1000, 10, 1);
 
             List<ObjectData> trees = pog.Generate(null, mountains);
 
@@ -49,7 +49,7 @@ public class ShapeDrawTest : MonoBehaviour
                 mJSONb.AddObject(tree);
             }
 
-            IObjectGenerator pog2 = new PoissonObjectGenerator(MAP_SIZE, MAP_SIZE, 1.5f, 30, 2);
+            IObjectGenerator pog2 = new PoissonObjectGenerator(MAP_SIZE, MAP_SIZE, 1.5f, 30, 1000, 10, 2);
 
             List<ObjectData> rocks = pog.Generate(null, mountains);
 
