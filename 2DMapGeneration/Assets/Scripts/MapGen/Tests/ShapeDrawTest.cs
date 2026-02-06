@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,17 +18,13 @@ public class ShapeDrawTest : MonoBehaviour
 
     void Awake()
     {
-        mJSONb = new MapJSONBuilder(new Vector2(MAP_SIZE, MAP_SIZE));
+/*         mJSONb = new MapJSONBuilder(new Vector2(MAP_SIZE, MAP_SIZE));
 
         if (shapeOutline != null && shapeTexture != null)
         {
             IMountainGenerator pmg = new PerlinMountainGenerator(new PerlinNoise(0, MAP_SIZE, MAP_SIZE, 0), MAP_SIZE, MAP_SIZE, 0.025f, 0.35f, 0.55f, 0.6f, 0.7f);
 
             List<MountainData> mountains = pmg.Generate(null);
-
-            /* CellularCaveGenerator cvg = new CellularCaveGenerator(MAP_SIZE, MAP_SIZE);
-
-            List<MountainData> mountains = cvg.Generate(null); */
 
             for(int i=0; i<mountains.Count; i++)
             {
@@ -61,29 +58,83 @@ public class ShapeDrawTest : MonoBehaviour
             }
         }
 
-        mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json");
-    }
+        mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json"); */
 
-    // Helper: simple radial polygon (convex, good for testing)
-    List<Vector2> GenerateRandomPolygon(Vector2 center, float radius, int pointCount)
-    {
-        List<Vector2> points = new();
+        Dictionary<int, Color> colorMap = new Dictionary<int, Color>();
 
-        float angleStep = 360f / pointCount;
+        int min = 0;
+        int max = 20;
 
-        for (int i = 0; i < pointCount; i++)
+        Color lowColor = Color.white;
+        Color highColor = Color.black;
+
+        for (int i = min; i <= max; i++)
         {
-            float angle = angleStep * i * Mathf.Deg2Rad;
-            float r = radius * Random.Range(0.7f, 1.1f);
-
-            Vector2 p = center + new Vector2(
-                Mathf.Cos(angle) * r,
-                Mathf.Sin(angle) * r
-            );
-
-            points.Add(p);
+            float t = (float)(i - min) / (max - min); // normalized 0..1
+            colorMap[i] = Color.Lerp(lowColor, highColor, t);
         }
 
-        return points;
+        CellularAutomata automata = new CellularAutomata(0, MAP_SIZE, MAP_SIZE, 0, 2);
+
+        automata.SetTransitionRule((grid, x, y) =>
+        {
+            int width = grid.GetLength(0);
+            int height = grid.GetLength(1);
+
+            int sum = 0;
+            int count = 0;
+
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                for (int dy = -1; dy <= 1; dy++)
+                {
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && (nx!=x || ny!=y))
+                    {
+                        sum += grid[nx, ny];
+                        count++;
+                    }
+                }
+            }
+
+            int newValue;
+
+            //Classic cavegen
+
+            if(grid[x,y] == 1)
+            {
+                //Wall stays wall if >=4 neighbours are wall
+                newValue = (sum >= 4) ? 1 : 0;
+            }
+            else
+            {
+                //Floor becomes wall if >=5 neighbours are wall
+                newValue = (sum >= 5) ? 1 : 0;
+            }
+
+            return newValue;
+        });
+
+        automata.Randomize();
+
+        CellularAutomataVisualizer automataVisualizer =
+            gameObject.AddComponent<CellularAutomataVisualizer>();
+
+        automataVisualizer.Initialize(automata, colorMap);
+
+        StartCoroutine(TestVisualization(automata, automataVisualizer));
+    }
+
+    private IEnumerator TestVisualization(CellularAutomata automata, CellularAutomataVisualizer visualizer)
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            yield return new WaitForSeconds(1f);
+            automata.ApplyTransition(1);
+            visualizer.VisStep();
+
+            Debug.Log(i);
+        }
     }
 }

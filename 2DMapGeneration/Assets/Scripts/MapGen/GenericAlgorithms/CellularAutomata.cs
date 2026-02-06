@@ -4,10 +4,10 @@ using System;
 
 public class CellularAutomata
 {
-    private int left;
-    private int right;
-    private int up;
-    private int down;
+    public int left  { get; private set; }
+    public int right { get; private set; }
+    public int up    { get; private set; }
+    public int down  { get; private set; }
 
     private int width, height;
 
@@ -40,7 +40,7 @@ public class CellularAutomata
 
 
     }
-
+    
     /// <summary>
     /// Randomly assigns states to all cells, except for the manually overwritten ones
     /// </summary>
