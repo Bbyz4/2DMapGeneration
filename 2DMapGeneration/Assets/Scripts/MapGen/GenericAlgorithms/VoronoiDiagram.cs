@@ -1,19 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class VoronoiDiagram
 {
-    private float left;
-    private float right;
-    private float up;
-    private float down;
+    public int left  { get; private set; }
+    public int right { get; private set; }
+    public int up    { get; private set; }
+    public int down  { get; private set; }
 
     private List<Vector2> sites;
     private HashSet<Vector2> manualSites;
 
-    public delegate float DistanceFunction(Vector2 a, Vector2 b);
-
-    public VoronoiDiagram(float left, float right, float up, float down)
+    public VoronoiDiagram(int left, int right, int up, int down)
     {
         this.left = left;
         this.right = right;
@@ -56,7 +55,7 @@ public class VoronoiDiagram
     /// Generates Voronoi sites.
     /// Includes all manual points and adds random ones.
     /// </summary>
-    public void Generate(int randomPointCount, DistanceFunction distanceFunction)
+    public void Generate(int randomPointCount, Func<Vector2, Vector2, float> distanceFunction)
     {
         this.distanceFunction = distanceFunction;
 
@@ -66,15 +65,15 @@ public class VoronoiDiagram
         for(int i = 0; i < randomPointCount; i++)
         {
             Vector2 p = new Vector2(
-                Random.Range(left, right),
-                Random.Range(down, up)
+                UnityEngine.Random.Range(left, right),
+                UnityEngine.Random.Range(down, up)
             );
 
             sites.Add(p);
         }
     }
 
-    private DistanceFunction distanceFunction;
+    private Func<Vector2, Vector2, float> distanceFunction;
 
     /// <summary>
     /// Returns the index of the Voronoi region for a continuous point.

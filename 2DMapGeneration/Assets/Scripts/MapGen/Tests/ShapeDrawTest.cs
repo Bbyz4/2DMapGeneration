@@ -60,10 +60,39 @@ public class ShapeDrawTest : MonoBehaviour
 
         mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json"); */
 
-        StartCoroutine(RunAlg());
+        StartCoroutine(RunVoronoiAlg());
     }
 
-    private IEnumerator RunAlg()
+    private IEnumerator RunVoronoiAlg()
+    {
+        Dictionary<int, Color> colorMap = new Dictionary<int, Color>();
+
+        for (int i = 0; i < 20; i++)
+        {
+            colorMap[i] = GetDistinctColor(i);
+        }
+
+        VoronoiDiagramFullAlg vdfa = gameObject.AddComponent<VoronoiDiagramFullAlg>();
+
+        vdfa.Initialize(
+            0,
+            MAP_SIZE,
+            MAP_SIZE,
+            0,
+            20,
+            (a, b) =>
+            {
+                return Vector2.Distance(a, b);
+            },
+            colorMap
+        );
+
+        yield return vdfa.RunAlg();
+
+        Debug.Log("KONIEC");
+    }
+
+    private IEnumerator RunCellularAlg()
     {
         Dictionary<int, Color> colorMap = new Dictionary<int, Color>();
 
@@ -134,7 +163,33 @@ public class ShapeDrawTest : MonoBehaviour
         yield return cafa.RunAlg();
 
         automataOnFinish = cafa.GetAutomata();
-
-        Debug.Log("KONIEC");
     }
+
+    private Color GetDistinctColor(int i)
+{
+    switch (i)
+    {
+        case 0:  return Color.red;
+        case 1:  return Color.green;
+        case 2:  return Color.blue;
+        case 3:  return Color.yellow;
+        case 4:  return Color.cyan;
+        case 5:  return Color.magenta;
+        case 6:  return new Color(1f, 0.5f, 0f);      // orange
+        case 7:  return new Color(0.5f, 0f, 1f);      // purple
+        case 8:  return new Color(0f, 0.5f, 1f);      // sky blue
+        case 9:  return new Color(0f, 1f, 0.5f);      // turquoise
+        case 10: return new Color(0.5f, 1f, 0f);      // lime
+        case 11: return new Color(1f, 0f, 0.5f);      // pink-red
+        case 12: return new Color(0.6f, 0.3f, 0f);    // brown
+        case 13: return new Color(0.3f, 0.3f, 0.3f);  // dark gray
+        case 14: return new Color(0.8f, 0.8f, 0.8f);  // light gray
+        case 15: return new Color(0f, 0.6f, 0.3f);    // teal green
+        case 16: return new Color(0.6f, 0f, 0.3f);    // wine
+        case 17: return new Color(0.3f, 0.6f, 0f);    // olive
+        case 18: return new Color(0f, 0.3f, 0.6f);    // deep blue
+        case 19: return new Color(0.9f, 0.9f, 0.2f);  // pale yellow
+        default: return Color.white;
+    }
+}
 }

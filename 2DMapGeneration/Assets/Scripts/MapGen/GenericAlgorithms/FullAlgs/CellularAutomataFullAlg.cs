@@ -38,8 +38,6 @@ public class CellularAutomataFullAlg : MonoBehaviour
         {
             automata.ApplyTransition(1);
             yield return automataVisualizer.VisStep();
-
-            Debug.Log($"FULL {i}");
         }
     }
 

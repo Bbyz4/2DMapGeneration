@@ -58,7 +58,6 @@ public class CellularAutomataVisualizer : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        Debug.Log("STEP");
     }
 
 }
