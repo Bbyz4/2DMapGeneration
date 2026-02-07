@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,7 +47,7 @@ public class CellularAutomataVisualizer : MonoBehaviour
         }
     }
 
-    public void VisStep()
+    public IEnumerator VisStep()
     {
         for(int i=left; i<=right; i++)
         {
@@ -55,6 +56,9 @@ public class CellularAutomataVisualizer : MonoBehaviour
                 generatedSquares[i-left, j-down].GetComponent<SpriteRenderer>().color = COLOR_MAP[AUTOMATA.GetCell(i, j)];
             }
         }
+
+        yield return new WaitForSeconds(1f);
+        Debug.Log("STEP");
     }
 
 }

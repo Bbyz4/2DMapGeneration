@@ -60,10 +60,15 @@ public class ShapeDrawTest : MonoBehaviour
 
         mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json"); */
 
+        StartCoroutine(RunAlg());
+    }
+
+    private IEnumerator RunAlg()
+    {
         Dictionary<int, Color> colorMap = new Dictionary<int, Color>();
 
         int min = 0;
-        int max = 20;
+        int max = 1;
 
         Color lowColor = Color.white;
         Color highColor = Color.black;
@@ -74,67 +79,62 @@ public class ShapeDrawTest : MonoBehaviour
             colorMap[i] = Color.Lerp(lowColor, highColor, t);
         }
 
-        CellularAutomata automata = new CellularAutomata(0, MAP_SIZE, MAP_SIZE, 0, 2);
+        CellularAutomata automataOnFinish;
 
-        automata.SetTransitionRule((grid, x, y) =>
-        {
-            int width = grid.GetLength(0);
-            int height = grid.GetLength(1);
+        CellularAutomataFullAlg cafa = gameObject.AddComponent<CellularAutomataFullAlg>();
 
-            int sum = 0;
-            int count = 0;
-
-            for (int dx = -1; dx <= 1; dx++)
+        cafa.Initialize(
+            0,
+            MAP_SIZE,
+            MAP_SIZE,
+            0,
+            2,
+            (grid, x, y) =>
             {
-                for (int dy = -1; dy <= 1; dy++)
+                int width = grid.GetLength(0);
+                int height = grid.GetLength(1);
+
+                int sum = 0;
+                int count = 0;
+
+                for (int dx = -1; dx <= 1; dx++)
                 {
-                    int nx = x + dx;
-                    int ny = y + dy;
-                    if (nx >= 0 && nx < width && ny >= 0 && ny < height && (nx!=x || ny!=y))
+                    for (int dy = -1; dy <= 1; dy++)
                     {
-                        sum += grid[nx, ny];
-                        count++;
+                        int nx = x + dx;
+                        int ny = y + dy;
+                        if (nx >= 0 && nx < width && ny >= 0 && ny < height && (nx!=x || ny!=y))
+                        {
+                            sum += grid[nx, ny];
+                            count++;
+                        }
                     }
                 }
-            }
 
-            int newValue;
+                int newValue;
 
-            //Classic cavegen
+                //Classic cavegen
 
-            if(grid[x,y] == 1)
-            {
-                //Wall stays wall if >=4 neighbours are wall
-                newValue = (sum >= 4) ? 1 : 0;
-            }
-            else
-            {
-                //Floor becomes wall if >=5 neighbours are wall
-                newValue = (sum >= 5) ? 1 : 0;
-            }
+                if(grid[x,y] == 1)
+                {
+                    //Wall stays wall if >=4 neighbours are wall
+                    newValue = (sum >= 4) ? 1 : 0;
+                }
+                else
+                {
+                    //Floor becomes wall if >=5 neighbours are wall
+                    newValue = (sum >= 5) ? 1 : 0;
+                }
 
-            return newValue;
-        });
+                return newValue;
+            },
+            colorMap
+        );
 
-        automata.Randomize();
+        yield return cafa.RunAlg();
 
-        CellularAutomataVisualizer automataVisualizer =
-            gameObject.AddComponent<CellularAutomataVisualizer>();
+        automataOnFinish = cafa.GetAutomata();
 
-        automataVisualizer.Initialize(automata, colorMap);
-
-        StartCoroutine(TestVisualization(automata, automataVisualizer));
-    }
-
-    private IEnumerator TestVisualization(CellularAutomata automata, CellularAutomataVisualizer visualizer)
-    {
-        for (int i = 0; i < 20; i++)
-        {
-            yield return new WaitForSeconds(1f);
-            automata.ApplyTransition(1);
-            visualizer.VisStep();
-
-            Debug.Log(i);
-        }
+        Debug.Log("KONIEC");
     }
 }
