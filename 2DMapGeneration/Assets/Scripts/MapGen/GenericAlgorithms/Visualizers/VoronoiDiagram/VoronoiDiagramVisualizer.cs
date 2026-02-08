@@ -66,4 +66,29 @@ public class VoronoiDiagramVisualizer : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
     }
+
+    public void Cleanup()
+    {
+        if (generatedFields == null)
+            return;
+
+        foreach (GameObject go in generatedFields)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        generatedFields = null;
+
+        if (generatedSites == null)
+            return;
+
+        foreach (GameObject go in generatedSites)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        generatedSites = null;
+    }
 }

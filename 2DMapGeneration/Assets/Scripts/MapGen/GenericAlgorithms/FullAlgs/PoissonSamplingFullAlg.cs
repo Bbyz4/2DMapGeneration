@@ -33,6 +33,11 @@ public class PoissonSamplingFullAlg : MonoBehaviour
         yield return samplingVisualizer.VisStep();
     }
 
+    public void Cleanup()
+    {
+        samplingVisualizer.Cleanup();
+    }
+
     public PoissonSampling GetSampling()
     {
         return sampling;

@@ -29,6 +29,11 @@ public class PerlinNoiseFullAlg : MonoBehaviour
         yield return noiseVisualizer.VisStep();
     }
 
+    public void Cleanup()
+    {
+        noiseVisualizer.Cleanup();
+    }
+
     public PerlinNoise GetNoise()
     {
         return noise;

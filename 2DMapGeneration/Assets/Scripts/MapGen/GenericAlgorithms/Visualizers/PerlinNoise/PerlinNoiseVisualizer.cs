@@ -11,6 +11,8 @@ public class PerlinNoiseVisualizer : MonoBehaviour
 
     [SerializeField] private GameObject arrowPrefab;
 
+    private List<GameObject> generatedArrows;
+
     private int left;
     private int right;
     private int up;
@@ -26,6 +28,8 @@ public class PerlinNoiseVisualizer : MonoBehaviour
         this.right = noise.right;
         this.up = noise.up;
         this.down = noise.down;
+
+        generatedArrows = new List<GameObject>();
     }
 
     public IEnumerator VisStep()
@@ -36,9 +40,23 @@ public class PerlinNoiseVisualizer : MonoBehaviour
         {
             float angle = Mathf.Atan2(grad.Value.y, grad.Value.x) * Mathf.Rad2Deg;
 
-            Instantiate(arrowPrefab, new Vector3(grad.Key.x, grad.Key.y, 0), Quaternion.Euler(new Vector3(0,0,angle)));
+            generatedArrows.Add(Instantiate(arrowPrefab, new Vector3(grad.Key.x, grad.Key.y, 0), Quaternion.Euler(new Vector3(0,0,angle))));
         }
 
         yield return new WaitForSeconds(1f);
+    }
+
+    public void Cleanup()
+    {
+        if (generatedArrows == null)
+            return;
+
+        foreach (GameObject go in generatedArrows)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        generatedArrows = null;
     }
 }

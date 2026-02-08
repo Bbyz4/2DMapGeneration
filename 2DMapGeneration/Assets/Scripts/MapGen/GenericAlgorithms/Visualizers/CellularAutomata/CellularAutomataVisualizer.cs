@@ -60,4 +60,17 @@ public class CellularAutomataVisualizer : MonoBehaviour
         yield return new WaitForSeconds(1f);
     }
 
+    public void Cleanup()
+    {
+        if (generatedSquares == null)
+            return;
+
+        foreach (GameObject go in generatedSquares)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        generatedSquares = null;
+    }
 }

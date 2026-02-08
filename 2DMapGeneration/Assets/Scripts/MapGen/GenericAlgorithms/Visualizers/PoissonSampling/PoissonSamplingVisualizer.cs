@@ -11,6 +11,8 @@ public class PoissonSamplingVisualizer : MonoBehaviour
 
     [SerializeField] private GameObject pointPrefab;
 
+    private List<GameObject> generatedPoints;
+
     private float left;
     private float right;
     private float top;
@@ -26,6 +28,8 @@ public class PoissonSamplingVisualizer : MonoBehaviour
         this.right = sampler.right;
         this.top = sampler.top;
         this.bottom = sampler.bottom;
+
+        generatedPoints = new List<GameObject>();
     }
 
     public IEnumerator VisStep()
@@ -34,9 +38,23 @@ public class PoissonSamplingVisualizer : MonoBehaviour
 
         foreach(Vector2 p in points)
         {
-            Instantiate(pointPrefab, new Vector3(p.x, p.y, 0f), Quaternion.identity);
+            generatedPoints.Add(Instantiate(pointPrefab, new Vector3(p.x, p.y, 0f), Quaternion.identity));
         }
 
         yield return new WaitForSeconds(1f);
+    }
+
+    public void Cleanup()
+    {
+        if (generatedPoints == null)
+            return;
+
+        foreach (GameObject go in generatedPoints)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        generatedPoints = null;
     }
 }

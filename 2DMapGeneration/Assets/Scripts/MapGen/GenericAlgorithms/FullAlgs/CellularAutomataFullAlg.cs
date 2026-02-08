@@ -41,6 +41,11 @@ public class CellularAutomataFullAlg : MonoBehaviour
         }
     }
 
+    public void Cleanup()
+    {
+        automataVisualizer.Cleanup();
+    }
+
     public CellularAutomata GetAutomata()
     {
         return automata;

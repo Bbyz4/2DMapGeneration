@@ -40,6 +40,11 @@ public class VoronoiDiagramFullAlg : MonoBehaviour
         yield return diagramVisualizer.VisStep();
     }
 
+    public void Cleanup()
+    {
+        diagramVisualizer.Cleanup();
+    }
+
     public VoronoiDiagram GetDiagram()
     {
         return diagram;
