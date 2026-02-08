@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 public class PerlinNoise
 {
-    private int left;
-    private int right;
-    private int up;
-    private int down;
+    public int left  { get; private set; }
+    public int right { get; private set; }
+    public int up    { get; private set; }
+    public int down  { get; private set; }
 
     private Dictionary<Vector2Int, Vector2> gradients;
     private HashSet<Vector2Int> manualOverrides;
@@ -46,6 +46,11 @@ public class PerlinNoise
                 gradients[key] = RandomUnitVector();
             }
         }
+    }
+
+    public Dictionary<Vector2Int, Vector2> GetGradients()
+    {
+        return gradients;
     }
 
     /// <summary>

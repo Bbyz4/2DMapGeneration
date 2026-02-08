@@ -60,8 +60,24 @@ public class ShapeDrawTest : MonoBehaviour
 
         mJSONb.SaveToJson("Assets/Scripts/MapGen/Tests/test_map.json"); */
 
-        StartCoroutine(RunCellularAlg());
+        StartCoroutine(RunNoiseAlg());
         StartCoroutine(RunSamplingAlg());
+    }
+
+    private IEnumerator RunNoiseAlg()
+    {
+        PerlinNoiseFullAlg pnfa = gameObject.AddComponent<PerlinNoiseFullAlg>();
+
+        pnfa.Initialize(
+            0,
+            MAP_SIZE,
+            MAP_SIZE,
+            0
+        );
+
+        yield return pnfa.RunAlg();
+
+        Debug.Log("KONIEC");
     }
 
     private IEnumerator RunSamplingAlg()
