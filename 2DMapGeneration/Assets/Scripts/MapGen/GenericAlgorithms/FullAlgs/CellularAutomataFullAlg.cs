@@ -29,7 +29,7 @@ public class CellularAutomataFullAlg : MonoBehaviour
 
         automataVisualizer = gameObject.AddComponent<CellularAutomataVisualizer>();
 
-        automataVisualizer.Initialize(automata, colorMap);
+        automataVisualizer.Initialize(automata, colorMap, visScale, visMovementX, visMovementY);
     }
 
     public IEnumerator RunAlg()

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 /// Generates Poisson-disk distributed points in 2D space
 /// using Bridson's algorithm.
 /// </summary>
-public class PoissonDiskSampler
+public class PoissonSampling
 {
-    private float left;
-    private float right;
-    private float bottom;
-    private float top;
+    public float left  { get; private set; }
+    public float right { get; private set; }
+    public float top    { get; private set; }
+    public float bottom  { get; private set; }
 
     private float minDistance;
     private int maxPoints;
@@ -26,7 +26,7 @@ public class PoissonDiskSampler
     /// <summary>
     /// Creates a Poisson disk sampler within bounds.
     /// </summary>
-    public PoissonDiskSampler(
+    public PoissonSampling(
         float left,
         float right,
         float bottom,
@@ -107,6 +107,11 @@ public class PoissonDiskSampler
             }
         }
 
+        return new List<Vector2>(points);
+    }
+
+    public List<Vector2> GetPreviouslyGeneratedPoints()
+    {
         return new List<Vector2>(points);
     }
 

@@ -11,7 +11,7 @@ public class PoissonObjectGenerator : IObjectGenerator
     private int objectID;
     private int initialClusters;
 
-    private PoissonDiskSampler sampler;
+    private PoissonSampling sampler;
 
     public PoissonObjectGenerator(
         int width,
@@ -30,7 +30,7 @@ public class PoissonObjectGenerator : IObjectGenerator
         this.objectID = objectID;
         this.initialClusters = initialClusters;
 
-        sampler = new PoissonDiskSampler(
+        sampler = new PoissonSampling(
             left: 0f,
             right: width,
             bottom: 0f,
