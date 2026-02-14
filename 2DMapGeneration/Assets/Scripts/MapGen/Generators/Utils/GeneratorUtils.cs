@@ -184,8 +184,8 @@ public static class GeneratorUtils
 
                 int level = biomeTable[x, y];
 
-                // Ignore flat land
-                if(level == 0)
+                // Convention: Ignore tiles that are market with a negative number
+                if(level < 0)
                 {
                     visited[x, y] = true;
                     continue;
