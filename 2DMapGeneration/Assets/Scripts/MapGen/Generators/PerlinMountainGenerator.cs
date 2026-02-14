@@ -214,4 +214,8 @@ public class PerlinMountainGenerator : IMountainGenerator
         return outline;
     }
 
+    public void Initialize(IMountainGeneratorArgs args)
+    {
+        throw new System.NotImplementedException();
+    }
 }

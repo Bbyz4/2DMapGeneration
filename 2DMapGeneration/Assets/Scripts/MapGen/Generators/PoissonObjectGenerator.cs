@@ -58,4 +58,9 @@ public class PoissonObjectGenerator : IObjectGenerator
 
         return result;
     }
+
+    public void Initialize(IObjectGeneratorArgs args)
+    {
+        throw new System.NotImplementedException();
+    }
 }

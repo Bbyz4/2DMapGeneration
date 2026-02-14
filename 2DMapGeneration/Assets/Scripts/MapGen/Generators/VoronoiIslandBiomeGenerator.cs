@@ -4,45 +4,31 @@ using System.Collections.Generic;
 public class VoronoiIslandBiomeGenerator : MonoBehaviour, IBiomeGenerator
 {
 
-    private int width;
-    private int height;
-    private int targetFinalBiomeAmount;
-    private int startingClusterAmount;
-    private bool excludeEdgeClusters;
-
-    //---
+    private VoronoiIslandBiomeGeneratorArgs args;
 
     private VoronoiDiagram diagram;
 
-    public VoronoiIslandBiomeGenerator(
-        int width,
-        int height,
-        int targetFinalBiomeAmount,
-        int startingClusterAmount,
-        bool excludeEdgeClusters
-    )
+    public void Initialize(IBiomeGeneratorArgs args)
     {
-        this.width = width;
-        this.height = height;
-        this.targetFinalBiomeAmount = targetFinalBiomeAmount;
-        this.startingClusterAmount = startingClusterAmount;
-        this.excludeEdgeClusters = excludeEdgeClusters;
-
-        diagram = new VoronoiDiagram(0, width-1, height-1, 0);
+        this.args = (VoronoiIslandBiomeGeneratorArgs)args;
     }
 
     public List<BiomeData> Generate(Vector2 mapSize)
     {
+        int width = (int)mapSize.x;
+        int height = (int)mapSize.y;
+        
+
         List<BiomeData> result = new List<BiomeData>();
 
-        diagram.Generate(startingClusterAmount, (Vector2 a, Vector2 b) => {return Vector2.Distance(a,b);});
+        diagram.Generate(args.startingClusterAmount, (Vector2 a, Vector2 b) => {return Vector2.Distance(a,b);});
 
         int[,] biomeMap = new int[width, height];
 
         //remove biomes that touch the edge of the map if the option was selected
         HashSet<int> removedBiomes = new HashSet<int>();
 
-        if(excludeEdgeClusters)
+        if(args.excludeEdgeClusters)
         {
             for(int i=0; i<height; i++)
             {
@@ -89,13 +75,13 @@ public class VoronoiIslandBiomeGenerator : MonoBehaviour, IBiomeGenerator
         });
 
 
-        DSU dsu = new DSU(startingClusterAmount);
+        DSU dsu = new DSU(args.startingClusterAmount);
 
-        int currentActiveClusters = startingClusterAmount - removedBiomes.Count;
+        int currentActiveClusters = args.startingClusterAmount - removedBiomes.Count;
 
         int currentLookedQueueIndex = 0;
 
-        while(currentActiveClusters > targetFinalBiomeAmount && currentLookedQueueIndex < connectingQueue.Count)
+        while(currentActiveClusters > args.targetFinalBiomeAmount && currentLookedQueueIndex < connectingQueue.Count)
         {
             Vector2Int potentialConnection = connectingQueue[currentLookedQueueIndex];
             currentLookedQueueIndex++;

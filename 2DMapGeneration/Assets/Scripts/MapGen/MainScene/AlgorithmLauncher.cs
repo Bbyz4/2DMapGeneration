@@ -2,11 +2,24 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class BiomeGeneratorDescriptor
+{
+    public Type generatorType;
+    public Type argsType;
+
+    public BiomeGeneratorDescriptor(Type generatorType, Type argsType)
+    {
+        this.generatorType = generatorType;
+        this.argsType = argsType;
+    }
+}
+
 public class AlgorithmLauncher : MonoBehaviour
 {
-    private static Dictionary<int, Type> BIOME_GENERATORS = new Dictionary<int, Type>
+    private static Dictionary<int, BiomeGeneratorDescriptor> BIOME_GENERATORS = new Dictionary<int, BiomeGeneratorDescriptor>
     {
-        {0, typeof(VoronoiIslandBiomeGenerator)}
+        {0, new BiomeGeneratorDescriptor(typeof(VoronoiIslandBiomeGenerator),typeof(VoronoiIslandBiomeGeneratorArgs)
+    )}
     };
 
     private static IBiomeGenerator CreateBiomeGenInstance(int ID, GameObject parentObj)
@@ -16,22 +29,28 @@ public class AlgorithmLauncher : MonoBehaviour
             throw new Exception($"Generator with ID {ID} not found!");
         }
 
-        return (IBiomeGenerator)parentObj.AddComponent(BIOME_GENERATORS[ID]);
+        return (IBiomeGenerator)parentObj.AddComponent(BIOME_GENERATORS[ID].generatorType);
     }
 
+    public Type GetArgsType(int ID)
+    {
+        if(!BIOME_GENERATORS.ContainsKey(ID))
+        {
+            throw new Exception($"Generator with ID {ID} not found!");
+        }
 
+        return BIOME_GENERATORS[ID].argsType;
+    }
 
-    public void LaunchABiomeGenerator(int ID)
+    public void LaunchABiomeGenerator(int ID, IBiomeGeneratorArgs args)
     {
         IBiomeGenerator generator = CreateBiomeGenInstance(ID, gameObject);  
 
         Vector2Int mapSize = GameObject.FindWithTag("ObjectPlacer").GetComponent<ObjectPlacer>().MAP_SIZE;
 
-        //temporary, very ugly, should not be here
-        generator = new VoronoiIslandBiomeGenerator(mapSize.x, mapSize.y, 10, 100, true);
-
         //do something with arguments, create a new interface for alg arguments
 
+        generator.Initialize(args);
         List<BiomeData> result =  generator.Generate(mapSize);
     
         GameObject.FindWithTag("UILoader").GetComponent<UILoader>().HideBiomeGeneratorPopup();    

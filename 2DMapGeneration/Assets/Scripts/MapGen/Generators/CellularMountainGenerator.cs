@@ -263,4 +263,9 @@ public class CellularMountainGenerator : IMountainGenerator
 
         return result;
     }
+
+    public void Initialize(IMountainGeneratorArgs args)
+    {
+        throw new System.NotImplementedException();
+    }
 }

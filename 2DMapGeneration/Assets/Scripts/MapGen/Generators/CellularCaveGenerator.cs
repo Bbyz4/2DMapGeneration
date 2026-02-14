@@ -249,4 +249,9 @@ private List<Vector2Int> FloodFill(
 
         return result;
     }
+
+    public void Initialize(IMountainGeneratorArgs args)
+    {
+        throw new System.NotImplementedException();
+    }
 }
