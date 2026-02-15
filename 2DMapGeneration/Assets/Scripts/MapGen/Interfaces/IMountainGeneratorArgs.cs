@@ -1,1 +1,1 @@
-public interface IMountainGeneratorArgs { }
+public interface IMountainGeneratorArgs : IGeneratorArgs { }

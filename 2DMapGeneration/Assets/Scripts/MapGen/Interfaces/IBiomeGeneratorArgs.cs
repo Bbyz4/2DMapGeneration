@@ -1,1 +1,1 @@
-public interface IBiomeGeneratorArgs { }
+public interface IBiomeGeneratorArgs : IGeneratorArgs { }

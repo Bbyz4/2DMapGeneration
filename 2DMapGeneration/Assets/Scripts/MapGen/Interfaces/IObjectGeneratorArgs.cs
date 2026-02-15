@@ -1,1 +1,1 @@
-public interface IObjectGeneratorArgs { }
+public interface IObjectGeneratorArgs : IGeneratorArgs { }
