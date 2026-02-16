@@ -387,9 +387,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 683212619}
-        m_TargetAssemblyTypeName: AlgorithmLauncher, Assembly-CSharp
-        m_MethodName: LaunchABiomeGenerator
+      - m_Target: {fileID: 515144984}
+        m_TargetAssemblyTypeName: ArgumentCollector, Assembly-CSharp
+        m_MethodName: CollectAndLaunchBiomeArgs
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -446,6 +446,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 515144983}
+  - component: {fileID: 515144984}
   m_Layer: 0
   m_Name: ArgumentCollector
   m_TagString: ArgumentCollector
@@ -468,6 +469,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &515144984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 515144982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36608cf47f817734c93d08178680ed15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  formParent: {fileID: 906459073}
+  numberInputPrefab: {fileID: 2369500897903926753, guid: 33d62692835a102458a249e8195ab0dd, type: 3}
+  booleanInputPrefab: {fileID: 5901288408316678934, guid: 8e5d524b074233d42a472491054d6a6e, type: 3}
+  submitButtonPrefab: {fileID: 4736568701384301716, guid: 68eb0d85242228549ba6f66773f18231, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -720,6 +737,7 @@ RectTransform:
   - {fileID: 16645541}
   - {fileID: 550712128}
   - {fileID: 1686896127}
+  - {fileID: 906459073}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1208,6 +1226,41 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &906459072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 906459073}
+  m_Layer: 5
+  m_Name: ArgFormParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &906459073
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906459072}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 521895391}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 1000, y: 1000}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &951712471
 GameObject:
   m_ObjectHideFlags: 0

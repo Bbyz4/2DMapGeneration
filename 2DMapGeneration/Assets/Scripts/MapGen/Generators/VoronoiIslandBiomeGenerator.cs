@@ -21,6 +21,8 @@ public class VoronoiIslandBiomeGenerator : MonoBehaviour, IBiomeGenerator
 
         List<BiomeData> result = new List<BiomeData>();
 
+        diagram = new VoronoiDiagram(0, width-1, height-1, 0);
+
         diagram.Generate(args.startingClusterAmount, (Vector2 a, Vector2 b) => {return Vector2.Distance(a,b);});
 
         int[,] biomeMap = new int[width, height];
