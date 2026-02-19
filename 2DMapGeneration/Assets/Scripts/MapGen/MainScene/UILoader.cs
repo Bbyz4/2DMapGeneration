@@ -13,7 +13,7 @@ public class UILoader : MonoBehaviour
         biomeGeneratorPopup.gameObject.SetActive(true);
     }
 
-    private void DeactivateAllPopups()
+    public void DeactivateAllPopups()
     {
         biomeGeneratorPopup.gameObject.SetActive(false);
         biomeChooseTypePopup.gameObject.SetActive(false);
@@ -27,7 +27,14 @@ public class UILoader : MonoBehaviour
 
         biomeChooseTypePopup.gameObject.SetActive(true);
 
-        //set the popup's callback to update the biome in argument
+        biomeChooseTypePopup.GetComponent<BiomeChooseTypePopup>().InitializeForGivenBiome(biomeObject);
+    }
+
+    public void LoadBiomeGenerateObjectsMainPopup(GameObject biomeObject)
+    {
+        DeactivateAllPopups();
+
+        //to be implemented
     }
 
     public void HideBiomeGeneratorPopup()

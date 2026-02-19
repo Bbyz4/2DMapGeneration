@@ -1,16 +1,56 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BiomeChooseTypePopup : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private GameObject biomeTypeManager;
+    private GameObject uiLoader;
+
+    [SerializeField] private GameObject typeButtonPrefab;
+
+    void Awake()
     {
-        
+        biomeTypeManager = GameObject.FindWithTag("BiomeTypeManager");
+        uiLoader = GameObject.FindWithTag("UILoader");
     }
 
-    // Update is called once per frame
-    void Update()
+    public void InitializeForGivenBiome(GameObject biomeObject)
     {
-        
+        int currentBiomeID = 0;
+
+        float currentX = 200f;
+        float currentY = 400f;
+
+        while(true)
+        {
+            BiomeCharacteristics bc = biomeTypeManager.GetComponent<BiomeTypeManager>().GetBiomeCharacteristicsFromID(currentBiomeID);
+
+            if(bc == null)
+            {
+                break;
+            }
+
+            GameObject buttonGO = Instantiate(typeButtonPrefab, transform);
+
+            RectTransform rect = buttonGO.GetComponent<RectTransform>();
+            rect.anchoredPosition = new Vector2(currentX, currentY);
+
+            int capturedID = currentBiomeID;
+
+            Button button = buttonGO.GetComponent<Button>();
+            if (button != null)
+            {
+                button.onClick.AddListener(() =>
+                {
+                    uiLoader.GetComponent<UILoader>().DeactivateAllPopups();
+                    biomeObject.GetComponent<BiomeBehaviour>().SetBiomeTypeID(capturedID);
+                });
+            }
+
+            currentX += 200f;
+            //currentY -= 100f;
+
+            currentBiomeID++;
+        }
     }
 }
