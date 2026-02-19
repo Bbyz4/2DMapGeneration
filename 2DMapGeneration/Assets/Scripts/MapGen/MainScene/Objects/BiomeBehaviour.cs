@@ -40,6 +40,10 @@ public class BiomeBehaviour : MonoBehaviour, IPointerDownHandler
         {
             biomeTypeID = newID;   
             biomeChars = newBiomeChars;
+
+            MeshRenderer renderer = GetComponent<MeshRenderer>();
+            renderer.material.mainTexture = biomeChars.GetDefaultTurf();
+
         }
     }
 }

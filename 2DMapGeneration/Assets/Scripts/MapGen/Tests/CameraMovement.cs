@@ -15,6 +15,8 @@ public class CameraPanZoom2D : MonoBehaviour
     {
         cam = GetComponent<Camera>();
         cam.orthographic = true;
+
+        cam.orthographicSize = maxZoom;
     }
 
     void Update()
