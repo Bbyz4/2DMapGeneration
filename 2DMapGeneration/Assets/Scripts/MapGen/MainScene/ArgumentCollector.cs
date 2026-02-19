@@ -44,7 +44,8 @@ public class ArgumentCollector : MonoBehaviour
 
         FieldInfo[] fields = argsType.GetFields();
 
-        float currentY = 0f;
+        float currentX = 600f;
+        float currentY = 400f;
 
         foreach(var field in fields)
         {
@@ -57,23 +58,23 @@ public class ArgumentCollector : MonoBehaviour
             //ugly, add a dictionary later
             if(field.FieldType == typeof(int) || field.FieldType == typeof(float))
             {
-                spawned = Instantiate(numberInputPrefab, new Vector3(0f, currentY, 0f), Quaternion.identity, formParent);
+                spawned = Instantiate(numberInputPrefab, new Vector3(currentX, currentY, 0f), Quaternion.identity, formParent);
             }
             else if(field.FieldType == typeof(bool))
             {
-                spawned = Instantiate(booleanInputPrefab, new Vector3(0f, currentY, 0f), Quaternion.identity, formParent);
+                spawned = Instantiate(booleanInputPrefab, new Vector3(currentX, currentY, 0f), Quaternion.identity, formParent);
             }
 
             if(spawned != null)
             {
-                currentY -= 75f; //ugly, move to constants file
+                currentY -= 50f; //ugly, move to constants file
 
                 spawned.transform.Find("Title").gameObject.GetComponent<TMP_Text>().text = field.Name;
                 spawnedInputs.Add(field, spawned);
             } 
         }
 
-        GameObject submit = Instantiate(submitButtonPrefab, new Vector3(0f, currentY, 0f), Quaternion.identity, formParent);
+        GameObject submit = Instantiate(submitButtonPrefab, new Vector3(currentX, currentY, 0f), Quaternion.identity, formParent);
         spawnedSubmitButton = submit;
         submit.GetComponent<Button>().onClick.AddListener(() =>
         {
