@@ -11,8 +11,6 @@ public class BiomeBehaviour : MonoBehaviour
         UILoader = GameObject.FindWithTag("UILoader");
         biomeTypeManager = GameObject.FindWithTag("BiomeTypeManager");
 
-        gameObject.AddComponent<PolygonCollider2D>();
-
         biomeTypeID = -1;
     }
 

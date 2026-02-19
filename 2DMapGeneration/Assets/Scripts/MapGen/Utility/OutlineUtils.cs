@@ -189,6 +189,11 @@ public static class OutlineUtils
             line.endColor = borderColor.Value;
         }
 
+        // 7. Polygon collider
+        PolygonCollider2D polyCollider = shapeObj.AddComponent<PolygonCollider2D>();
+        polyCollider.pathCount = 1;
+        polyCollider.SetPath(0, outline.ToArray());
+
         return shapeObj;
     }
 }
