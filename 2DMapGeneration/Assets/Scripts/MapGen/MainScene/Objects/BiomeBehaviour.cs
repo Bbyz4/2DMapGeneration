@@ -1,6 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class BiomeBehaviour : MonoBehaviour
+public class BiomeBehaviour : MonoBehaviour, IPointerDownHandler
 {
     private GameObject UILoader;
     private GameObject biomeTypeManager;
@@ -14,7 +15,7 @@ public class BiomeBehaviour : MonoBehaviour
         biomeTypeID = -1;
     }
 
-    void OnMouseDown()
+    public void OnPointerDown(PointerEventData eventData)
     {
         if(biomeTypeID == -1)
         {
