@@ -30,8 +30,10 @@ public class BiomeChooseTypePopup : MonoBehaviour
         spawnedButtons.Clear();
     }
 
-    public void InitializeForGivenBiome(GameObject biomeObject)
+    public void InitializeForGivenBiome(BiomeBehaviour biomeBeh)
     {
+        GameObject biomeObject = biomeBeh.gameObject;
+
         ClearSpawnedObjects();
 
         int currentBiomeID = 0;

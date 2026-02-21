@@ -10,6 +10,8 @@ public class UILoader : MonoBehaviour
     [SerializeField] private MountainGeneratorPopup mountainGeneratorPopup;
     [SerializeField] private ObjectGeneratorPopup objectGeneratorPopup;
 
+    //make those enums, this is getting out of hand...
+
     void Awake()
     {
         DeactivateAllPopups();
@@ -25,7 +27,7 @@ public class UILoader : MonoBehaviour
         objectGeneratorPopup.gameObject.SetActive(false);
     }
 
-    public void LoadBiomeChooseTypePopup(GameObject biomeObject)
+    public void LoadBiomeChooseTypePopup(BiomeBehaviour biomeObject)
     {
         DeactivateAllPopups();
 
@@ -34,7 +36,7 @@ public class UILoader : MonoBehaviour
         biomeChooseTypePopup.GetComponent<BiomeChooseTypePopup>().InitializeForGivenBiome(biomeObject);
     }
 
-    public void LoadBiomeGenerateObjectsMainPopup(GameObject biomeObject)
+    public void LoadBiomeGenerateObjectsMainPopup(BiomeBehaviour biomeObject)
     {
         DeactivateAllPopups();
 
@@ -43,22 +45,36 @@ public class UILoader : MonoBehaviour
         biomeGenerateObjectsMainPopup.SetCallbacks(biomeObject);
     }
 
-    public void LoadMountainGeneratorPopup(GameObject biomeObject)
+    public void LoadMountainGeneratorPopup(BiomeBehaviour biomeObject)
     {
         DeactivateAllPopups();
 
         mountainGeneratorPopup.gameObject.SetActive(true);
+
+        mountainGeneratorPopup.InitializeForGivenBiome(biomeObject);
     }
 
-    public void LoadObjectGeneratorPopup(GameObject biomeObject)
+    public void LoadObjectGeneratorPopup(BiomeBehaviour biomeObject)
     {
         DeactivateAllPopups();
 
         objectGeneratorPopup.gameObject.SetActive(true);
+
+        objectGeneratorPopup.InitializeForGivenBiome(biomeObject);
     }
 
     public void HideBiomeGeneratorPopup()
     {
         biomeGeneratorPopup.gameObject.SetActive(false);
+    }
+
+    public void HideMountainGeneratorPopup()
+    {
+        mountainGeneratorPopup.gameObject.SetActive(false);
+    }
+
+    public void HideObjectGeneratorPopup()
+    {
+        objectGeneratorPopup.gameObject.SetActive(false);
     }
 }

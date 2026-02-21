@@ -6,6 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum ArgumentCollectingFormType
+{
+    BIOME,
+    MOUNTAIN,
+    OBJECT
+};
+
 public class ArgumentCollector : MonoBehaviour
 {
     private AlgorithmLauncher algorithmLauncher;
@@ -38,7 +45,7 @@ public class ArgumentCollector : MonoBehaviour
         Destroy(spawnedSubmitButton);
     }
 
-    private void BuildAlgorithmUI(Type argsType, int biomeAlgID)
+    private void BuildAlgorithmUI(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh)
     {
         ClearUI();
 
@@ -78,14 +85,12 @@ public class ArgumentCollector : MonoBehaviour
         spawnedSubmitButton = submit;
         submit.GetComponent<Button>().onClick.AddListener(() =>
         {
-            OnSubmit(argsType, biomeAlgID);
+            OnSubmit(argsType, biomeAlgID, type, biomeBeh);
         });
     }
 
-    private void OnSubmit(Type argsType, int biomeAlgID)
+    private void CollectArgs(IGeneratorArgs argsInstance)
     {
-        IBiomeGeneratorArgs argsInstance = (IBiomeGeneratorArgs)Activator.CreateInstance(argsType);
-
         foreach(var pair in spawnedInputs)
         {
             FieldInfo field = pair.Key;
@@ -103,18 +108,78 @@ public class ArgumentCollector : MonoBehaviour
                 field.SetValue(argsInstance, toggle.isOn);
             }
         }
+    }
 
-        //here, later we will validate args. So each algorithm will have a method used for validating received data, which will be launched here
+    private void OnSubmit(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh)
+    {
+        switch(type)
+        {
+            case ArgumentCollectingFormType.BIOME:
+            {
+                IBiomeGeneratorArgs argsInstance = (IBiomeGeneratorArgs)Activator.CreateInstance(argsType);
 
-        ClearUI();
+                CollectArgs(argsInstance);
 
-        algorithmLauncher.LaunchABiomeGenerator(biomeAlgID, argsInstance);
+                //here, later we will validate args. So each algorithm will have a method used for validating received data, which will be launched here
+
+                ClearUI();
+
+                algorithmLauncher.LaunchABiomeGenerator(biomeAlgID, argsInstance);
+
+                break;
+            }
+            case ArgumentCollectingFormType.MOUNTAIN:
+            {
+                IMountainGeneratorArgs argsInstance = (IMountainGeneratorArgs)Activator.CreateInstance(argsType);
+
+                CollectArgs(argsInstance);
+
+                //here, later we will validate args. So each algorithm will have a method used for validating received data, which will be launched here
+
+                ClearUI();
+
+                algorithmLauncher.LaunchAMountainGenerator(biomeAlgID, argsInstance, biomeBeh);
+
+                break;
+            }
+            case ArgumentCollectingFormType.OBJECT:
+            {
+                IObjectGeneratorArgs argsInstance = (IObjectGeneratorArgs)Activator.CreateInstance(argsType);
+
+                CollectArgs(argsInstance);
+
+                //here, later we will validate args. So each algorithm will have a method used for validating received data, which will be launched here
+
+                ClearUI();
+
+                algorithmLauncher.LaunchAnObjectGenerator(biomeAlgID, argsInstance, biomeBeh);
+
+                break;
+            }
+
+            default:
+                break;
+        }
     }
 
     public void CollectAndLaunchBiomeArgs(int biomeAlgID)
     {
-        Type argsType = algorithmLauncher.GetArgsType(biomeAlgID);
+        Type argsType = algorithmLauncher.GetBiomeArgsType(biomeAlgID);
 
-        BuildAlgorithmUI(argsType, biomeAlgID);
+        BuildAlgorithmUI(argsType, biomeAlgID, ArgumentCollectingFormType.BIOME, null);
+    }
+
+    public void CollectAndLaunchMountainArgs(int mountainAlgID, BiomeBehaviour biomeBeh)
+    {
+        Type argsType = algorithmLauncher.GetMountainArgsType(mountainAlgID);
+
+        BuildAlgorithmUI(argsType, mountainAlgID, ArgumentCollectingFormType.MOUNTAIN, biomeBeh);
+    }
+
+    public void CollectAndLaunchObjectArgs(int objectAlgID, BiomeBehaviour biomeBeh)
+    {
+        Type argsType = algorithmLauncher.GetObjectArgsType(objectAlgID);
+
+        BuildAlgorithmUI(argsType, objectAlgID, ArgumentCollectingFormType.OBJECT, biomeBeh);
     }
 }

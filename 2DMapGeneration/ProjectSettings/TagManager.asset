@@ -9,6 +9,7 @@ TagManager:
   - ObjectPlacer
   - ArgumentCollector
   - BiomeTypeManager
+  - PlacableObjectsManager
   layers:
   - Default
   - TransparentFX

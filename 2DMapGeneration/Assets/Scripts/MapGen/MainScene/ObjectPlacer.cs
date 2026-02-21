@@ -5,6 +5,8 @@ public class ObjectPlacer : MonoBehaviour
 {
     private MapJSONBuilder mapJSONBuilder;
 
+    private PlacableObjectsManager placableObjectsManager;
+
     [SerializeField] private Texture2D defaultBiomeTexture;
 
     public Vector2Int MAP_SIZE {get; private set;} = new Vector2Int(500,500); //later move to a separate class with constants or prompt the user at start
@@ -12,6 +14,8 @@ public class ObjectPlacer : MonoBehaviour
     void Awake()
     {
         mapJSONBuilder = new MapJSONBuilder(MAP_SIZE);
+
+        placableObjectsManager = GameObject.FindWithTag("PlacableObjectsManager").GetComponent<PlacableObjectsManager>();
     }
 
     public void PlaceBiomes(List<BiomeData> biomeList)
@@ -22,11 +26,34 @@ public class ObjectPlacer : MonoBehaviour
             mapJSONBuilder.AddBiome(biome);
 
             newBiome.AddComponent<BiomeBehaviour>();
+            newBiome.GetComponent<BiomeBehaviour>().SetBiomeData(biome);
 
             //do something else, for instance set sorting layer, ordering layer etc.
         }
 
         SaveJSON();
+    }
+
+    public void PlaceMountains(List<MountainData> mountainList, BiomeBehaviour parentBiome)
+    {
+        foreach(MountainData mountain in mountainList)
+        {
+            GameObject newMountain = OutlineUtils.CreateShapeObject($"Mountain", mountain.outline, parentBiome.GetCharacteristics().GetMountainTurf(mountain.elevationLevel), parentBiome.transform, Color.black, 0.1f);
+            mapJSONBuilder.AddMountain(mountain);
+
+            parentBiome.AddMountain(mountain, newMountain);
+        }
+    }
+
+    public void PlaceObjects(List<ObjectData> objectList, BiomeBehaviour parentBiome)
+    {
+        foreach(ObjectData obj in objectList)
+        {
+            GameObject newObj = Instantiate(placableObjectsManager.GetObjectPrefab(obj.objectID), new Vector3(obj.position.x, obj.position.y, 0f), Quaternion.identity, parentBiome.transform);
+            mapJSONBuilder.AddObject(obj);
+
+            parentBiome.AddObject(obj, newObj);
+        }
     }
 
     private void SaveJSON()

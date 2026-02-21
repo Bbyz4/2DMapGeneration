@@ -13,7 +13,7 @@ public class BiomeGenerateObjectsMainPopup : MonoBehaviour
         uiLoader = GameObject.FindWithTag("UILoader");
     }
 
-    public void SetCallbacks(GameObject biomeObject)
+    public void SetCallbacks(BiomeBehaviour biomeObject)
     {
         mountainGenButton.GetComponent<Button>().onClick.RemoveAllListeners();
 
