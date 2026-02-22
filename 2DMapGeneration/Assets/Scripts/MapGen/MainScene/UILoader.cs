@@ -54,7 +54,7 @@ public class UILoader : MonoBehaviour
         mountainGeneratorPopup.InitializeForGivenBiome(biomeObject);
     }
 
-    public void LoadObjectGeneratorPopup(BiomeBehaviour biomeObject)
+    public void LoadObjectGeneratorPopup(BiomeBehaviour biomeObject, int objectID)
     {
         DeactivateAllPopups();
 
