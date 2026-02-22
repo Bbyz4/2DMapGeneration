@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class OutlineUtils
 {
@@ -195,5 +196,15 @@ public static class OutlineUtils
         polyCollider.SetPath(0, outline.ToArray());
 
         return shapeObj;
+    }
+
+    public static Rect GetBoundingRect(List<Vector2> outline)
+    {
+        float minX = outline.Min(p => p.x);
+        float maxX = outline.Max(p => p.x);
+        float minY = outline.Min(p => p.y);
+        float maxY = outline.Max(p => p.y);
+
+        return Rect.MinMaxRect(minX, minY, maxX, maxY);
     }
 }

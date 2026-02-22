@@ -28,7 +28,7 @@ public class AlgorithmLauncher : MonoBehaviour
 
     private static Dictionary<int, GeneratorDescriptor> OBJECT_GENERATORS = new Dictionary<int, GeneratorDescriptor>
     {
-        
+        {0, new GeneratorDescriptor(typeof(PoissonObjectGenerator), typeof(PoissonObjectGeneratorArgs))}
     };
 
     private static IBiomeGenerator CreateBiomeGenInstance(int ID, GameObject parentObj)
@@ -121,14 +121,14 @@ public class AlgorithmLauncher : MonoBehaviour
         Destroy((MonoBehaviour)generator);
     }
 
-    public void LaunchAnObjectGenerator(int ID, IObjectGeneratorArgs args, BiomeBehaviour biome)
+    public void LaunchAnObjectGenerator(int ID, IObjectGeneratorArgs args, BiomeBehaviour biome, int generatedObjectID)
     {
         IObjectGenerator generator = CreateObjectGenInstance(ID, gameObject);
 
         generator.Initialize(args);
-        List<ObjectData> result = generator.Generate(biome.GetData(), (List<MountainData>)biome.GetMountainDatas());
+        List<ObjectData> result = generator.Generate(biome.GetData(), (List<MountainData>)biome.GetMountainDatas(), generatedObjectID);
 
-        GameObject.FindWithTag("UILoader").GetComponent<UILoader>().HideMountainGeneratorPopup();    
+        GameObject.FindWithTag("UILoader").GetComponent<UILoader>().HideObjectGeneratorPopup();    
         GameObject.FindWithTag("ObjectPlacer").GetComponent<ObjectPlacer>().PlaceObjects(result, biome);
 
         Destroy((MonoBehaviour)generator);

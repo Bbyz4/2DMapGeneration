@@ -45,7 +45,7 @@ public class ArgumentCollector : MonoBehaviour
         Destroy(spawnedSubmitButton);
     }
 
-    private void BuildAlgorithmUI(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh)
+    private void BuildAlgorithmUI(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh, int generatedObjectID)
     {
         ClearUI();
 
@@ -85,7 +85,7 @@ public class ArgumentCollector : MonoBehaviour
         spawnedSubmitButton = submit;
         submit.GetComponent<Button>().onClick.AddListener(() =>
         {
-            OnSubmit(argsType, biomeAlgID, type, biomeBeh);
+            OnSubmit(argsType, biomeAlgID, type, biomeBeh, generatedObjectID);
         });
     }
 
@@ -96,10 +96,16 @@ public class ArgumentCollector : MonoBehaviour
             FieldInfo field = pair.Key;
             GameObject uiComponent = pair.Value;
 
-            if (field.FieldType == typeof(int) || field.FieldType == typeof(float))
+            if (field.FieldType == typeof(int))
             {
                 var input = uiComponent.GetComponent<TMP_InputField>();
                 int value = int.Parse(input.text);
+                field.SetValue(argsInstance, value);
+            }
+            else if(field.FieldType == typeof(float))
+            {
+                var input = uiComponent.GetComponent<TMP_InputField>();
+                float value = float.Parse(input.text);
                 field.SetValue(argsInstance, value);
             }
             else if (field.FieldType == typeof(bool))
@@ -110,7 +116,7 @@ public class ArgumentCollector : MonoBehaviour
         }
     }
 
-    private void OnSubmit(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh)
+    private void OnSubmit(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh, int generatedObjectID)
     {
         switch(type)
         {
@@ -152,7 +158,7 @@ public class ArgumentCollector : MonoBehaviour
 
                 ClearUI();
 
-                algorithmLauncher.LaunchAnObjectGenerator(biomeAlgID, argsInstance, biomeBeh);
+                algorithmLauncher.LaunchAnObjectGenerator(biomeAlgID, argsInstance, biomeBeh, generatedObjectID);
 
                 break;
             }
@@ -166,20 +172,20 @@ public class ArgumentCollector : MonoBehaviour
     {
         Type argsType = algorithmLauncher.GetBiomeArgsType(biomeAlgID);
 
-        BuildAlgorithmUI(argsType, biomeAlgID, ArgumentCollectingFormType.BIOME, null);
+        BuildAlgorithmUI(argsType, biomeAlgID, ArgumentCollectingFormType.BIOME, null, -1);
     }
 
     public void CollectAndLaunchMountainArgs(int mountainAlgID, BiomeBehaviour biomeBeh)
     {
         Type argsType = algorithmLauncher.GetMountainArgsType(mountainAlgID);
 
-        BuildAlgorithmUI(argsType, mountainAlgID, ArgumentCollectingFormType.MOUNTAIN, biomeBeh);
+        BuildAlgorithmUI(argsType, mountainAlgID, ArgumentCollectingFormType.MOUNTAIN, biomeBeh, -1);
     }
 
-    public void CollectAndLaunchObjectArgs(int objectAlgID, BiomeBehaviour biomeBeh)
+    public void CollectAndLaunchObjectArgs(int objectAlgID, BiomeBehaviour biomeBeh, int generatedObjectID)
     {
         Type argsType = algorithmLauncher.GetObjectArgsType(objectAlgID);
 
-        BuildAlgorithmUI(argsType, objectAlgID, ArgumentCollectingFormType.OBJECT, biomeBeh);
+        BuildAlgorithmUI(argsType, objectAlgID, ArgumentCollectingFormType.OBJECT, biomeBeh, generatedObjectID);
     }
 }

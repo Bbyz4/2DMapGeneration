@@ -4,5 +4,5 @@ using UnityEngine;
 public interface IObjectGenerator
 {
     public void Initialize(IObjectGeneratorArgs args);
-    public List<ObjectData> Generate(BiomeData biome, List<MountainData> mountains);
+    public List<ObjectData> Generate(BiomeData biome, List<MountainData> mountains, int generatedObjectID);
 }

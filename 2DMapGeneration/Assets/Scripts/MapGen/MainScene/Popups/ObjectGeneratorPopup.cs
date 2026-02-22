@@ -11,7 +11,7 @@ public class ObjectGeneratorPopup : MonoBehaviour
         argumentCollector = GameObject.FindWithTag("ArgumentCollector").GetComponent<ArgumentCollector>();
     }
 
-    public void InitializeForGivenBiome(BiomeBehaviour biomeBeh)
+    public void InitializeForGivenBiome(BiomeBehaviour biomeBeh, int generatedObjectID)
     {
         foreach(Transform child in transform)
         {
@@ -35,7 +35,7 @@ public class ObjectGeneratorPopup : MonoBehaviour
 
                 button.onClick.AddListener(() =>
                 {
-                    argumentCollector.CollectAndLaunchObjectArgs(capturedValue, biomeBeh);
+                    argumentCollector.CollectAndLaunchObjectArgs(capturedValue, biomeBeh, generatedObjectID);
                 });
             }
         }

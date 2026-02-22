@@ -1,16 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class PoissonObjectGenerator : IObjectGenerator
+public class PoissonObjectGenerator : MonoBehaviour, IObjectGenerator
 {
-    private int width;
-    private int height;
-    private float minDistance;
-    private int maxAttempts;
-    private int maxObjects;
-    private int objectID;
-    private int initialClusters;
 
+    private PoissonObjectGeneratorArgs args;
     private PoissonSampling sampler;
 
     public PoissonObjectGenerator(
@@ -22,14 +16,6 @@ public class PoissonObjectGenerator : IObjectGenerator
         int initialClusters,
         int objectID)
     {
-        this.width = width;
-        this.height = height;
-        this.minDistance = minDistance;
-        this.maxAttempts = maxAttempts;
-        this.maxObjects = maxObjects;
-        this.objectID = objectID;
-        this.initialClusters = initialClusters;
-
         sampler = new PoissonSampling(
             left: 0f,
             right: width,
@@ -42,25 +28,41 @@ public class PoissonObjectGenerator : IObjectGenerator
         );
     }
 
-    public List<ObjectData> Generate(BiomeData biome, List<MountainData> mountains)
+    public void Initialize(IObjectGeneratorArgs args)
     {
+        this.args = (PoissonObjectGeneratorArgs)args;
+    }
+
+    public List<ObjectData> Generate(BiomeData biome, List<MountainData> mountains, int generatedObjectID)
+    {
+        Rect bounds = OutlineUtils.GetBoundingRect(biome.outline);
+
+        sampler = new PoissonSampling(
+            left: bounds.xMin,
+            right: bounds.xMax,
+            bottom: bounds.yMin,
+            top: bounds.yMax,
+            minDistance: args.minDistance,
+            maxPoints: args.maxObjects,
+            initialPoints: args.initialClusters,
+            rejectionSamples: args.maxAttempts
+        );
+
         List<Vector2> points = sampler.Generate();
-        List<ObjectData> result = new List<ObjectData>(points.Count);
+        List<ObjectData> result = new List<ObjectData>();
 
         foreach (var p in points)
         {
-            result.Add(new ObjectData
+            if(OutlineUtils.IsPointInOutline(p, biome.outline))
             {
-                position = p,
-                objectID = objectID
-            });
+                result.Add(new ObjectData
+                {
+                    position = p,
+                    objectID = generatedObjectID
+                });
+            }
         }
 
         return result;
-    }
-
-    public void Initialize(IObjectGeneratorArgs args)
-    {
-        throw new System.NotImplementedException();
     }
 }

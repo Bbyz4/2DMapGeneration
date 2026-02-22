@@ -60,7 +60,7 @@ public class UILoader : MonoBehaviour
 
         objectGeneratorPopup.gameObject.SetActive(true);
 
-        objectGeneratorPopup.InitializeForGivenBiome(biomeObject);
+        objectGeneratorPopup.InitializeForGivenBiome(biomeObject, objectID);
     }
 
     public void HideBiomeGeneratorPopup()
