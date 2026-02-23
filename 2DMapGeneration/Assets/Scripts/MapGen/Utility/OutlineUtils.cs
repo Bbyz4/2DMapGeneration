@@ -207,4 +207,99 @@ public static class OutlineUtils
 
         return Rect.MinMaxRect(minX, minY, maxX, maxY);
     }
+
+    private static int[,] CutOutlineBorderStep(int[,] grid, int width, int height)
+    {
+        int[,] result = new int[width, height];
+
+        for(int x=1; x<width-1; x++)
+        {
+            for(int y=1; y<height-1; y++)
+            {
+                if(grid[x,y] == 1 && grid[x-1,y] == 1 && grid[x+1,y] == 1 && grid[x,y-1] == 1 && grid[x,y+1] == 1)
+                {
+                    result[x,y] = 1;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    //For a given outline and border size, return an outline with the border of given size cut out
+    public static List<Vector2> CutOutlineBorder(List<Vector2> outline, int borderSize)
+    {
+        if(borderSize <= 0)
+        {
+            return new List<Vector2>(outline);
+        }
+
+        Rect bounds = GetBoundingRect(outline);
+
+        int width = Mathf.CeilToInt(bounds.width);
+        int height = Mathf.CeilToInt(bounds.height);
+
+        int[,] grid = new int[width, height];
+
+        for(int x=0; x<width; x++)
+        {
+            for(int y=0; y<height; y++)
+            {
+                Vector2 p = new Vector2(bounds.xMin + x + 0.5f, bounds.yMin + y + 0.5f);
+                if(IsPointInOutline(p, outline))
+                {
+                    grid[x,y] = 1;
+                }
+            }
+        }
+
+        for(int i=0; i<borderSize; i++)
+        {
+            grid = CutOutlineBorderStep(grid, width, height);
+        }
+
+        return GeneratorUtils.BuildMountainOutlines(grid, width, height, (int)bounds.xMin, (int)bounds.yMin).FirstOrDefault().outline;
+
+    }
+
+    //For two given outlines, return their intersection
+    public static List<Vector2> GetOutlinesIntersection(List<Vector2> a, List<Vector2> b)
+    {
+        Rect boundsA = GetBoundingRect(a);
+        Rect boundsB = GetBoundingRect(b);
+
+        Rect bounds = Rect.MinMaxRect(
+            Mathf.Min(boundsA.xMin, boundsB.xMin),
+            Mathf.Min(boundsA.yMin, boundsB.yMin),
+            Mathf.Max(boundsA.xMax, boundsB.xMax),
+            Mathf.Max(boundsA.yMax, boundsB.yMax)
+        );
+
+        int width = Mathf.CeilToInt(bounds.width);
+        int height = Mathf.CeilToInt(bounds.height);
+
+        int[,] grid = new int[width, height];
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                Vector2 p = new Vector2(bounds.xMin + x + 0.5f, bounds.yMin + y + 0.5f);
+
+                if (IsPointInOutline(p, a) && IsPointInOutline(p, b))
+                    grid[x, y] = 1;
+            }
+        }
+
+        List<MountainData> something = GeneratorUtils.BuildMountainOutlines(grid, width, height, (int)bounds.xMin, (int)bounds.yMin);
+
+        if(something.Count == 0)
+        {
+            return null;
+        }
+        else
+        {
+            return something.First().outline;
+        }
+    }
 }

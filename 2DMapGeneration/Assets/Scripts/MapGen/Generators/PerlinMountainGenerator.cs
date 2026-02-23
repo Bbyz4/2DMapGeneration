@@ -45,6 +45,26 @@ public class PerlinMountainGenerator : MonoBehaviour, IMountainGenerator
 
         List<MountainData> result = GeneratorUtils.BuildMountainOutlines(elevationMap, width, height, (int)bounds.xMin, (int)bounds.yMin);
 
-        return result;
+        List<Vector2> biomeOutlineNoBorder = OutlineUtils.CutOutlineBorder(biome.outline, 2);
+
+        if(biomeOutlineNoBorder == null)
+        {
+            Debug.Log("A");
+        }
+
+        List<MountainData> filtered = new List<MountainData>();
+
+        foreach (MountainData md in result)
+        {
+            List<Vector2> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biomeOutlineNoBorder);
+
+            if (clipped != null && clipped.Count >= 3)
+            {
+                md.outline = clipped;
+                filtered.Add(md);
+            }
+        }
+
+        return filtered;
     }
 }
