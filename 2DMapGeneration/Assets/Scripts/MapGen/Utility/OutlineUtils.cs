@@ -87,7 +87,7 @@ public static class OutlineUtils
         return value > 0 ? 1 : 2;
     }
 
-    private static Mesh CreateMeshFromOutline(List<Vector2> outline, Rect textureUvRect)
+    private static Mesh CreateMeshFromOutline(List<Vector2> outline, Rect textureUvRect, float zOrder)
     {
         if (outline == null || outline.Count < 3)
         {
@@ -108,7 +108,7 @@ public static class OutlineUtils
 
         for (int i = 0; i < outline.Count; i++)
         {
-            vertices[i] = new Vector3(outline[i].x, outline[i].y, 0);
+            vertices[i] = new Vector3(outline[i].x, outline[i].y, zOrder);
             
             float tileSize = 1f; // world units per texture tile
             uvs[i] = new Vector2(
@@ -134,7 +134,7 @@ public static class OutlineUtils
         return mesh;
     }
 
-    public static GameObject CreateShapeObject(string name, List<Vector2> outline, Texture2D shapeTexture, Transform parent, Color? borderColor = null, float borderWidth = 0.05f)
+    public static GameObject CreateShapeObject(string name, List<Vector2> outline, Texture2D shapeTexture, Transform parent, Color? borderColor = null, float borderWidth = 0.05f, float zOrder = 0f)
     {
         // 1. Create the new GameObject
         GameObject shapeObj = new GameObject(name);
@@ -148,7 +148,7 @@ public static class OutlineUtils
         MeshRenderer meshRenderer = shapeObj.AddComponent<MeshRenderer>();
 
         // 4. Generate the Mesh
-        Mesh generatedMesh = OutlineUtils.CreateMeshFromOutline(outline, new Rect(0, 0, 1, 1));
+        Mesh generatedMesh = OutlineUtils.CreateMeshFromOutline(outline, new Rect(0, 0, 1, 1), zOrder);
         meshFilter.mesh = generatedMesh;
 
         // 5. Setup the Material

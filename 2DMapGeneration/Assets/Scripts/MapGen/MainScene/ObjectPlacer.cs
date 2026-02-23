@@ -22,7 +22,7 @@ public class ObjectPlacer : MonoBehaviour
     {
         foreach(BiomeData biome in biomeList)
         {
-            GameObject newBiome = OutlineUtils.CreateShapeObject($"Biome", biome.outline, defaultBiomeTexture, this.transform, Color.black, 0.1f);
+            GameObject newBiome = OutlineUtils.CreateShapeObject($"Biome", biome.outline, defaultBiomeTexture, this.transform, Color.black, 0.1f, 0f);
             mapJSONBuilder.AddBiome(biome);
 
             newBiome.AddComponent<BiomeBehaviour>();
@@ -38,7 +38,9 @@ public class ObjectPlacer : MonoBehaviour
     {
         foreach(MountainData mountain in mountainList)
         {
-            GameObject newMountain = OutlineUtils.CreateShapeObject($"Mountain", mountain.outline, parentBiome.GetCharacteristics().GetMountainTurf(mountain.elevationLevel), parentBiome.transform, Color.black, 0.1f);
+            float zOrder = mountain.elevationLevel == -1 ? -1f : mountain.elevationLevel * -1f;
+
+            GameObject newMountain = OutlineUtils.CreateShapeObject($"Mountain", mountain.outline, parentBiome.GetCharacteristics().GetMountainTurf(mountain.elevationLevel), parentBiome.transform, Color.black, 0.1f, zOrder);
             mapJSONBuilder.AddMountain(mountain);
 
             parentBiome.AddMountain(mountain, newMountain);
