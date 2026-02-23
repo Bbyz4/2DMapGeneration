@@ -57,7 +57,7 @@ public static class GeneratorUtils
         return outline;
     }
 
-    private static List<Vector2> BuildOutline(List<Vector2Int> region)
+    private static List<Vector2> BuildOutline(List<Vector2Int> region, int xAddedToAllOutlines = 0, int yAddedToAllOutlines = 0)
     {
         HashSet<Vector2Int> regionSet = new HashSet<Vector2Int>(region);
         List<Edge> edges = new List<Edge>();
@@ -67,29 +67,32 @@ public static class GeneratorUtils
             int x = cell.x;
             int y = cell.y;
 
+            int fx = x + xAddedToAllOutlines;
+            int fy = y + yAddedToAllOutlines;
+
             // Left
             if (!regionSet.Contains(new Vector2Int(x - 1, y)))
                 edges.Add(new Edge(
-                    new Vector2(x, y),
-                    new Vector2(x, y + 1)));
+                    new Vector2(fx, fy),
+                    new Vector2(fx, fy + 1)));
 
             // Right
             if (!regionSet.Contains(new Vector2Int(x + 1, y)))
                 edges.Add(new Edge(
-                    new Vector2(x + 1, y + 1),
-                    new Vector2(x + 1, y)));
+                    new Vector2(fx + 1, fy + 1),
+                    new Vector2(fx + 1, fy)));
 
             // Bottom
             if (!regionSet.Contains(new Vector2Int(x, y - 1)))
                 edges.Add(new Edge(
-                    new Vector2(x + 1, y),
-                    new Vector2(x, y)));
+                    new Vector2(fx + 1, fy),
+                    new Vector2(fx, fy)));
 
             // Top
             if (!regionSet.Contains(new Vector2Int(x, y + 1)))
                 edges.Add(new Edge(
-                    new Vector2(x, y + 1),
-                    new Vector2(x + 1, y + 1)));
+                    new Vector2(fx, fy + 1),
+                    new Vector2(fx + 1, fy + 1)));
         }
 
         return OrderEdges(edges);
@@ -128,7 +131,7 @@ public static class GeneratorUtils
         return cells;
     }
 
-    public static List<MountainData> BuildMountainOutlines(int[,] elevationMap, int width, int height)
+    public static List<MountainData> BuildMountainOutlines(int[,] elevationMap, int width, int height, int xAddedToAllOutlines = 0, int yAddedToAllOutlines = 0)
     {
         List<MountainData> result = new List<MountainData>();
 
@@ -157,7 +160,7 @@ public static class GeneratorUtils
                 MountainData mountain = new MountainData
                 {
                     elevationLevel = level,
-                    outline = BuildOutline(region)
+                    outline = BuildOutline(region, xAddedToAllOutlines, yAddedToAllOutlines)
                 };
 
                 result.Add(mountain);

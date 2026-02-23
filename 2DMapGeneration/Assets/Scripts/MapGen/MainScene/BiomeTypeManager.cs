@@ -23,6 +23,8 @@ public class BiomeCharacteristics
     {
         switch(level)
         {
+            case -1:
+                return this.GetLakeTurf();
             case 1:
                 return mountainLevel1Turf;
             case 2:
