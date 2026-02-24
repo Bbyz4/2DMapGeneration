@@ -30,6 +30,12 @@ public class BiomeBehaviour : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        //only handle left mouse button clicks
+        if(eventData.button != PointerEventData.InputButton.Left)
+        {
+            return;
+        }
+
         if(biomeTypeID == -1)
         {
             UILoader.GetComponent<UILoader>().LoadBiomeChooseTypePopup(this);

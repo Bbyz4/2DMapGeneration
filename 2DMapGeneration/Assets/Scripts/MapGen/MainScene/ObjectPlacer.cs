@@ -22,7 +22,7 @@ public class ObjectPlacer : MonoBehaviour
     {
         foreach(BiomeData biome in biomeList)
         {
-            GameObject newBiome = OutlineUtils.CreateShapeObject($"Biome", biome.outline, defaultBiomeTexture, this.transform, Color.black, 0.1f, 0f);
+            GameObject newBiome = OutlineUtils.CreateShapeObject($"Biome", biome.outline, defaultBiomeTexture, this.transform, Color.black, 0.1f, 0);
             mapJSONBuilder.AddBiome(biome);
 
             newBiome.AddComponent<BiomeBehaviour>();
@@ -38,9 +38,9 @@ public class ObjectPlacer : MonoBehaviour
     {
         foreach(MountainData mountain in mountainList)
         {
-            float zOrder = mountain.elevationLevel == -1 ? -1f : mountain.elevationLevel * -1f;
+            int sortingOrder = Mathf.Abs(mountain.elevationLevel);
 
-            GameObject newMountain = OutlineUtils.CreateShapeObject($"Mountain", mountain.outline, parentBiome.GetCharacteristics().GetMountainTurf(mountain.elevationLevel), parentBiome.transform, Color.black, 0.1f, zOrder);
+            GameObject newMountain = OutlineUtils.CreateShapeObject($"Mountain", mountain.outline, parentBiome.GetCharacteristics().GetMountainTurf(mountain.elevationLevel), parentBiome.transform, Color.black, 0.1f, sortingOrder);
             mapJSONBuilder.AddMountain(mountain);
 
             parentBiome.AddMountain(mountain, newMountain);
@@ -52,9 +52,12 @@ public class ObjectPlacer : MonoBehaviour
         foreach(ObjectData obj in objectList)
         {
             GameObject newObj = Instantiate(placableObjectsManager.GetObjectPrefab(obj.objectID), new Vector3(obj.position.x, obj.position.y, 0f), Quaternion.identity, parentBiome.transform);
+            newObj.GetComponent<SpriteRenderer>().sortingOrder = 4;
             mapJSONBuilder.AddObject(obj);
 
             parentBiome.AddObject(obj, newObj);
+
+            newObj.AddComponent<ObjectBehaviour>();
         }
     }
 
