@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,8 +39,8 @@ public class BiomeChooseTypePopup : MonoBehaviour
 
         int currentBiomeID = 0;
 
-        float currentX = 200f;
-        float currentY = 400f;
+        float currentX = -567f;
+        float currentY = 330f;
 
         while(true)
         {
@@ -51,6 +52,8 @@ public class BiomeChooseTypePopup : MonoBehaviour
             }
 
             GameObject buttonGO = Instantiate(typeButtonPrefab, transform);
+
+            buttonGO.transform.GetChild(0).GetComponent<TMP_Text>().text = bc.BiomeName;
 
             spawnedButtons.Add(buttonGO);
 
@@ -69,8 +72,13 @@ public class BiomeChooseTypePopup : MonoBehaviour
                 });
             }
 
-            currentX += 200f;
-            //currentY -= 100f;
+            currentX += 567f;
+
+            if(currentX > 1000f)
+            {
+                currentX = -567f;
+                currentY -= 90f;
+            }
 
             currentBiomeID++;
         }

@@ -45,6 +45,11 @@ public class ArgumentCollector : MonoBehaviour
         Destroy(spawnedSubmitButton);
     }
 
+    public void CancelCollection()
+    {
+        ClearUI();
+    }
+
     private void BuildAlgorithmUI(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh, int generatedObjectID)
     {
         ClearUI();

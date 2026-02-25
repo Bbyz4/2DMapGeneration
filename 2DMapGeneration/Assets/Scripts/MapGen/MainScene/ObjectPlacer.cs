@@ -9,7 +9,7 @@ public class ObjectPlacer : MonoBehaviour
 
     [SerializeField] private Texture2D defaultBiomeTexture;
 
-    public Vector2Int MAP_SIZE {get; private set;} = new Vector2Int(500,500); //later move to a separate class with constants or prompt the user at start
+    public Vector2Int MAP_SIZE {get; private set;} = new Vector2Int(1000,1000); //later move to a separate class with constants or prompt the user at start
 
     void Awake()
     {
