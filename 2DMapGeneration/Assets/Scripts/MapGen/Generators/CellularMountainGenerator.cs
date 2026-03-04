@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+//*************************************************************OLD*******************************************************************
 public class CellularMountainGenerator : IMountainGenerator
 {
     private CellularAutomata automata;
