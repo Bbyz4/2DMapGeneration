@@ -9,4 +9,5 @@ public class WFCMountainGeneratorArgs : IMountainGeneratorArgs
     public float mountain2Probability;
     public float mountain3Probability;
     public float clusteringCoefficient;
+    public bool includeCornersAsNeighbours;
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class PriorityQueue
 {
@@ -124,27 +125,36 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
     {
         List<Vector2Int> result = new List<Vector2Int>();
 
-        if(tile.x - 1 >= 0)
+        for(int dx = -1; dx <= 1; dx++)
         {
-            result.Add(new Vector2Int(tile.x - 1, tile.y));
-        }
+            for(int dy = -1; dy <= 1; dy++)
+            {
+                if(dx == 0 && dy == 0)
+                {
+                    continue;
+                }
 
-        if(tile.x + 1 < width)
-        {
-            result.Add(new Vector2Int(tile.x + 1, tile.y));
-        }
+                int newX = tile.x + dx;
+                int newY = tile.y + dy;
 
-        if(tile.y - 1 >= 0)
-        {
-            result.Add(new Vector2Int(tile.x, tile.y - 1));
-        }
-
-        if(tile.y + 1 < height)
-        {
-            result.Add(new Vector2Int(tile.x, tile.y + 1));
+                if(newX >= 0 && newX < width && newY >= 0 && newY < height)
+                {
+                    if(args.includeCornersAsNeighbours || Math.Abs(dx) + Math.Abs(dy) < 2)
+                    {
+                        result.Add(new Vector2Int(newX, newY));
+                    }
+                }
+            }
         }
 
         return result;
+    }
+
+    private bool PropagateConstraints(HashSet<int> from, HashSet<int> to)
+    {
+        int removedElements = to.RemoveWhere(x => from.All(y => Math.Abs(x-y) > 1));
+
+        return removedElements != 0;
     }
 
     private int[,] WFCGenerateMap(int width, int height)
@@ -218,26 +228,46 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
             float randomNum = UnityEngine.Random.Range(0f, probabilitySum);
             int decidedHeight = -1;
 
-            for(int h=-1; h<3; h++)
+            for(int h=-1; h<=3; h++)
             {
                 if(probabilitiesCumsum[h] > randomNum)
                 {
-                    decidedHeight++;
+                    decidedHeight = h;
+                    break;
                 }
             }
 
             elevationMap[tile.x, tile.y] = decidedHeight;
+            possibleFieldValues[tile] = new HashSet<int> { decidedHeight };
 
             //6. Apply constraints to neighbours
-            //IMPORTANT TODO: constraints should be propagated recursively to other tiles as well, not just direct neighbours
+            Queue<Vector2Int> fromConstraintQueue = new Queue<Vector2Int>();
+            Queue<Vector2Int> toConstraintQueue = new Queue<Vector2Int>();
             foreach(Vector2Int neigh in GetNeighbours(tile, width, height))
             {
-                int oldSize = possibleFieldValues[neigh].Count;
-                possibleFieldValues[neigh].RemoveWhere(x => Math.Abs(x-decidedHeight) > 1);
-            
-                if(possibleFieldValues[neigh].Count != oldSize)
+                fromConstraintQueue.Enqueue(tile); 
+                toConstraintQueue.Enqueue(neigh);
+            }
+
+            while(fromConstraintQueue.Count != 0)
+            {
+                Vector2Int from = fromConstraintQueue.Dequeue();
+                Vector2Int to = toConstraintQueue.Dequeue();
+
+                bool wasChanged = PropagateConstraints(possibleFieldValues[from], possibleFieldValues[to]);
+                if(wasChanged)
                 {
-                    entropyQueue.Enqueue(neigh, possibleFieldValues[neigh].Count);
+                    //6.5 Fail immediately if a tile is impossible to fill
+                    if(possibleFieldValues[to].Count == 0)
+                    {
+                        return null;
+                    }
+
+                    foreach(Vector2Int neigh in GetNeighbours(to, width, height))
+                    {
+                        fromConstraintQueue.Enqueue(to);
+                        toConstraintQueue.Enqueue(neigh);
+                    }
                 }
             }
 
@@ -255,15 +285,31 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
 
         int[,] elevationMap = null;
 
+        int tryID = 0;
+
         do
         {
             elevationMap = WFCGenerateMap(width, height);
-            Debug.Log("Try");
+            Debug.Log($"Try #{tryID}");
+            tryID++;
         }
         while(elevationMap == null);
 
         List<MountainData> result = GeneratorUtils.BuildMountainOutlines(elevationMap, width, height, (int)bounds.xMin, (int)bounds.yMin);
     
-        return result;
+        List<MountainData> filtered = new List<MountainData>();
+
+        foreach (MountainData md in result)
+        {
+            List<Vector2> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biome.outline);
+
+            if (clipped != null && clipped.Count >= 3)
+            {
+                md.outline = clipped;
+                filtered.Add(md);
+            }
+        }
+
+        return filtered;
     }
 }
