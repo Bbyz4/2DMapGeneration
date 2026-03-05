@@ -76,6 +76,9 @@ public static class GeneratorUtils
 
         List<Vector2> outline = new List<Vector2>();
 
+        int stepCounter = 0;
+        int MAX_STEPS = 10000;
+
         do
         {
            outline.Add(current); 
@@ -85,7 +88,7 @@ public static class GeneratorUtils
            Vector2 incomingDirection = (current - prev).normalized;
 
            Vector2 bestNeigh = neighbours[0];
-           float bestAngle = float.MaxValue;
+           float bestAngle = float.MinValue;
 
            foreach(Vector2 neigh in neighbours)
            {
@@ -98,9 +101,9 @@ public static class GeneratorUtils
 
                 float angle = Vector2.SignedAngle(incomingDirection, direction);
 
-                angle += (angle < 0) ? 360f : 0f;
+                angle -= (angle > 91f) ? 360f : 0f;
 
-                if(angle < bestAngle)
+                if(angle > bestAngle)
                 {
                     bestAngle = angle;
                     bestNeigh = neigh;
@@ -109,6 +112,13 @@ public static class GeneratorUtils
 
            prev = current;
            current = bestNeigh;
+
+           stepCounter++;
+           if(stepCounter > MAX_STEPS)
+            {
+                Debug.LogError("OrderEdges fail");
+                break;
+            }
         }
         while(current != startVertex);
 

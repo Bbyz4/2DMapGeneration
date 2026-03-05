@@ -293,7 +293,13 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
             Debug.Log($"Try #{tryID}");
             tryID++;
         }
-        while(elevationMap == null);
+        while(elevationMap == null && tryID < args.maxTries);
+
+        if(elevationMap == null)
+        {
+            Debug.LogError("WFC Algorithm fail");
+            return new List<MountainData>();
+        }
 
         List<MountainData> result = GeneratorUtils.BuildMountainOutlines(elevationMap, width, height, (int)bounds.xMin, (int)bounds.yMin);
     

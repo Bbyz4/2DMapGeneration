@@ -10,4 +10,5 @@ public class WFCMountainGeneratorArgs : IMountainGeneratorArgs
     public float mountain3Probability;
     public float clusteringCoefficient;
     public bool includeCornersAsNeighbours;
+    public int maxTries;
 }
