@@ -31,28 +31,86 @@ public static class GeneratorUtils
 
     private static List<Vector2> OrderEdges(List<Edge> edges)
     {
-        List<Vector2> outline = new List<Vector2>();
-
-        Edge current = edges[0];
-        outline.Add(current.a);
-        outline.Add(current.b);
-        edges.RemoveAt(0);
-
-        while (edges.Count > 0)
+        if(edges.Count == 0)
         {
-            Vector2 last = outline[outline.Count - 1];
-
-            int index = edges.FindIndex(e => e.a == last || e.b == last);
-            if (index == -1)
-                break;
-
-            Edge next = edges[index];
-            edges.RemoveAt(index);
-
-            outline.Add(next.a == last ? next.b : next.a);
+            return new List<Vector2>();
         }
 
-        outline.RemoveAt(outline.Count - 1);
+        Dictionary<Vector2, List<Vector2>> VertexGraph = new Dictionary<Vector2, List<Vector2>>();
+
+        foreach(Edge e in edges)
+        {
+            if(!VertexGraph.ContainsKey(e.a))
+            {
+                VertexGraph[e.a] = new List<Vector2>();
+            }
+
+            if(!VertexGraph.ContainsKey(e.b))
+            {
+                VertexGraph[e.b] = new List<Vector2>();
+            }
+
+            VertexGraph[e.a].Add(e.b);
+            VertexGraph[e.b].Add(e.a);
+        }
+
+        //Left-lowest vertex
+        Vector2 startVertex = edges[0].a;
+
+        foreach(Edge e in edges)
+        {
+            if(e.a.x < startVertex.x || e.a.x == startVertex.x && e.a.y < startVertex.y)
+            {
+                startVertex = e.a;
+            }
+
+            if(e.b.x < startVertex.x || e.b.x == startVertex.x && e.b.y < startVertex.y)
+            {
+                startVertex = e.b;
+            }
+        }
+
+        //Fake prevVertex
+        Vector2 prev = new Vector2(startVertex.x - 1, startVertex.y);
+        Vector2 current = startVertex;
+
+        List<Vector2> outline = new List<Vector2>();
+
+        do
+        {
+           outline.Add(current); 
+
+           List<Vector2> neighbours = VertexGraph[current];
+
+           Vector2 incomingDirection = (current - prev).normalized;
+
+           Vector2 bestNeigh = neighbours[0];
+           float bestAngle = float.MaxValue;
+
+           foreach(Vector2 neigh in neighbours)
+           {
+                if(neigh == prev)
+                {
+                    continue;
+                }
+
+                Vector2 direction = (neigh - current).normalized;
+
+                float angle = Vector2.SignedAngle(incomingDirection, direction);
+
+                angle += (angle < 0) ? 360f : 0f;
+
+                if(angle < bestAngle)
+                {
+                    bestAngle = angle;
+                    bestNeigh = neigh;
+                }
+           }
+
+           prev = current;
+           current = bestNeigh;
+        }
+        while(current != startVertex);
 
         return outline;
     }

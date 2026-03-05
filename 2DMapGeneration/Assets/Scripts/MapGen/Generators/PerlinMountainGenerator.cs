@@ -56,12 +56,17 @@ public class PerlinMountainGenerator : MonoBehaviour, IMountainGenerator
 
         foreach (MountainData md in result)
         {
-            List<Vector2> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biomeOutlineNoBorder);
+            List<List<Vector2>> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biomeOutlineNoBorder);
 
-            if (clipped != null && clipped.Count >= 3)
+            if (clipped != null)
             {
-                md.outline = clipped;
-                filtered.Add(md);
+                foreach(List<Vector2> newOutline in clipped)
+                {
+                    MountainData newMD = new MountainData();
+                    newMD.outline = newOutline;
+                    newMD.elevationLevel = md.elevationLevel;
+                    filtered.Add(newMD);
+                }
             }
         }
 

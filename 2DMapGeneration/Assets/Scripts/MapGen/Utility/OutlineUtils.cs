@@ -265,7 +265,7 @@ public static class OutlineUtils
     }
 
     //For two given outlines, return their intersection
-    public static List<Vector2> GetOutlinesIntersection(List<Vector2> a, List<Vector2> b)
+    public static List<List<Vector2>> GetOutlinesIntersection(List<Vector2> a, List<Vector2> b)
     {
         Rect boundsA = GetBoundingRect(a);
         Rect boundsB = GetBoundingRect(b);
@@ -299,9 +299,14 @@ public static class OutlineUtils
         {
             return null;
         }
-        else
+
+        List<List<Vector2>> result = new List<List<Vector2>>();
+
+        foreach(MountainData md in something)
         {
-            return something.First().outline;
+            result.Add(md.outline);
         }
+
+        return result;
     }
 }
