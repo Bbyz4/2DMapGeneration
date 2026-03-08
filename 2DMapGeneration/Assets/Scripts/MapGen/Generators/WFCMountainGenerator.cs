@@ -147,6 +147,13 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
             }
         }
 
+        //Randomizing the result, so that the priority queue approach simulates a uniformly random one
+        for(int i = result.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (result[i], result[j]) = (result[j], result[i]); //(swap)
+        }
+
         return result;
     }
 
@@ -262,6 +269,8 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
                     {
                         return null;
                     }
+
+                    entropyQueue.Enqueue(to, possibleFieldValues[to].Count);
 
                     foreach(Vector2Int neigh in GetNeighbours(to, width, height))
                     {
