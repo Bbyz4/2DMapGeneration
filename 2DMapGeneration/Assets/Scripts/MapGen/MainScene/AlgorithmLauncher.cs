@@ -24,7 +24,8 @@ public class AlgorithmLauncher : MonoBehaviour
     private static Dictionary<int, GeneratorDescriptor> MOUNTAIN_GENERATORS = new Dictionary<int, GeneratorDescriptor>
     {
         {0, new GeneratorDescriptor(typeof(PerlinMountainGenerator), typeof(PerlinMountainGeneratorArgs))},
-        {1, new GeneratorDescriptor(typeof(WFCMountainGenerator), typeof(WFCMountainGeneratorArgs))}
+        {1, new GeneratorDescriptor(typeof(WFCMountainGenerator), typeof(WFCMountainGeneratorArgs))},
+        {2, new GeneratorDescriptor(typeof(WeierstrassMountainGenerator), typeof(WeierstrassMountainGeneratorArgs))}
     };
 
     private static Dictionary<int, GeneratorDescriptor> OBJECT_GENERATORS = new Dictionary<int, GeneratorDescriptor>
