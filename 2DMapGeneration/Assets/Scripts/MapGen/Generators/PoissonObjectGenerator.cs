@@ -51,15 +51,36 @@ public class PoissonObjectGenerator : MonoBehaviour, IObjectGenerator
         List<Vector2> points = sampler.Generate();
         List<ObjectData> result = new List<ObjectData>();
 
+        Dictionary<int, bool> legalMountainLevels = GameObject.FindWithTag("PlacableObjectsManager").GetComponent<PlacableObjectsManager>().GetObjectPlacabilityDict(generatedObjectID);
+
         foreach (var p in points)
         {
             if(OutlineUtils.IsPointInOutline(p, biome.outline))
             {
-                result.Add(new ObjectData
+                bool test = true;
+
+                foreach(MountainData m in mountains)
                 {
-                    position = p,
-                    objectID = generatedObjectID
-                });
+                    if(!legalMountainLevels[m.elevationLevel] && OutlineUtils.IsPointInOutline(p, m.outline))
+                    {
+                        test = false;
+                        break;
+                    }
+                }
+
+                if(test && !legalMountainLevels[0])
+                {
+                    test = false;
+                }
+
+                if(test)
+                {
+                    result.Add(new ObjectData
+                    {
+                        position = p,
+                        objectID = generatedObjectID
+                    });   
+                }
             }
         }
 

@@ -3984,9 +3984,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dff394b1cddbca4db7176e5a36d04ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectPrefabs:
-  - {fileID: 3660122625891668638, guid: 6100348184b3cf546803ea1db0a528c8, type: 3}
-  - {fileID: 8679704386411635627, guid: fc2ae54bd1e0c9a4f8fca662ac412c36, type: 3}
+  objects:
+  - objectPrefab: {fileID: 7273924277709732705, guid: cc27b7184bdac6c4b808ca33dcfd72d9, type: 3}
+    isPlacableOnLake: 0
+    isPlacableOnSurface: 1
+    isPlacableOnMountainLevel1: 0
+    isPlacableOnMountainLevel2: 0
+    isPlacableOnMountainLevel3: 0
+  - objectPrefab: {fileID: 2362910572050096808, guid: a129336a7f2f41748a321c90ddb7a6c6, type: 3}
+    isPlacableOnLake: 0
+    isPlacableOnSurface: 1
+    isPlacableOnMountainLevel1: 1
+    isPlacableOnMountainLevel2: 1
+    isPlacableOnMountainLevel3: 0
 --- !u!1 &1474648454
 GameObject:
   m_ObjectHideFlags: 0
