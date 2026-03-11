@@ -67,7 +67,7 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
         {
             for(int y=0; y<height; y++)
             {
-                computedValues[x,y] = GetWeierstrassMandelbrotValue(x - 0.5f*width, y - 0.5f*height, L);
+                computedValues[x,y] = GetWeierstrassMandelbrotValue(x - 0.5f*width, y - 0.5f*height, L*args.scale);
                 minComputed = MathF.Min(minComputed, computedValues[x,y]);
                 maxComputed = MathF.Max(maxComputed, computedValues[x,y]);
             }
@@ -78,7 +78,7 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
             for(int y=0; y<height; y++)
             {
                 float normalized = (computedValues[x,y]-minComputed)/(maxComputed-minComputed);
-                elevationMap[x,y] = (int)(-1 + 4*normalized);
+                elevationMap[x,y] = (int)(-2 + 6*normalized);
             }
         }
 
