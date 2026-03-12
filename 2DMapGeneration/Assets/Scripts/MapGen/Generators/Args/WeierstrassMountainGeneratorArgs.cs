@@ -9,4 +9,8 @@ public class WeierstrassMountainGeneratorArgs : IMountainGeneratorArgs
     public int M;
     public int n_max;
     public float scale;
+    public float a;
+    public float b;
+    public float c;
+    public float d;
 }

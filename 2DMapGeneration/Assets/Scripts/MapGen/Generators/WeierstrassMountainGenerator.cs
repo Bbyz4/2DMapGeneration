@@ -26,7 +26,7 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
         }
     }
 
-    public float GetWeierstrassMandelbrotValue(float x, float y, float L)
+    private float GetWeierstrassMandelbrotValue(float x, float y, float L)
     {
         float A = MathF.Pow(L * (args.G/L), args.D-2) * MathF.Pow(MathF.Log(args.gamma)/args.M, 0.5f);  
         float z = 0;
@@ -46,6 +46,30 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
         }
 
         return A*z;
+    }
+
+    private int GetElevationValue(float normalizedWeierstrass)
+    {
+        if(normalizedWeierstrass < args.a)
+        {
+            return -1;
+        }
+        else if(normalizedWeierstrass < args.b)
+        {
+            return 0;
+        }
+        else if(normalizedWeierstrass < args.c)
+        {
+            return 1;
+        }
+        else if(normalizedWeierstrass < args.d)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
     }
 
     public List<MountainData> Generate(BiomeData biome)
@@ -78,7 +102,7 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
             for(int y=0; y<height; y++)
             {
                 float normalized = (computedValues[x,y]-minComputed)/(maxComputed-minComputed);
-                elevationMap[x,y] = (int)(-2 + 6*normalized);
+                elevationMap[x,y] = GetElevationValue(normalized);
             }
         }
 

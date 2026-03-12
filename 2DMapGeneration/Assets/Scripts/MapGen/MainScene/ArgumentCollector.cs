@@ -56,8 +56,8 @@ public class ArgumentCollector : MonoBehaviour
 
         FieldInfo[] fields = argsType.GetFields();
 
-        float currentX = 600f;
-        float currentY = 400f;
+        float currentX = 850f;
+        float currentY = 475f;
 
         foreach(var field in fields)
         {
@@ -79,7 +79,7 @@ public class ArgumentCollector : MonoBehaviour
 
             if(spawned != null)
             {
-                currentY -= 50f; //ugly, move to constants file
+                currentY -= 30f; //ugly, move to constants file
 
                 spawned.transform.Find("Title").gameObject.GetComponent<TMP_Text>().text = field.Name;
                 spawnedInputs.Add(field, spawned);
