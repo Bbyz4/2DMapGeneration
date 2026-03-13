@@ -6,6 +6,7 @@ public class ObjectPlacer : MonoBehaviour
     private MapJSONBuilder mapJSONBuilder;
 
     private PlacableObjectsManager placableObjectsManager;
+    private TilemapRenderer tilemapRenderer;
 
     [SerializeField] private Texture2D defaultBiomeTexture;
 
@@ -16,6 +17,7 @@ public class ObjectPlacer : MonoBehaviour
         mapJSONBuilder = new MapJSONBuilder(MAP_SIZE);
 
         placableObjectsManager = GameObject.FindWithTag("PlacableObjectsManager").GetComponent<PlacableObjectsManager>();
+        tilemapRenderer = GameObject.FindWithTag("TilemapRenderer").GetComponent<TilemapRenderer>();
     }
 
     public void PlaceBiomes(List<BiomeData> biomeList)
@@ -34,7 +36,7 @@ public class ObjectPlacer : MonoBehaviour
         SaveJSON();
     }
 
-    public void PlaceMountains(List<MountainData> mountainList, BiomeBehaviour parentBiome)
+/*     public void PlaceMountains(List<MountainData> mountainList, BiomeBehaviour parentBiome)
     {
         foreach(MountainData mountain in mountainList)
         {
@@ -45,6 +47,11 @@ public class ObjectPlacer : MonoBehaviour
 
             parentBiome.AddMountain(mountain, newMountain);
         }
+    } */
+
+    public void PlaceMountainsFromElevationMap(MountainGeneratorResult result, BiomeBehaviour parentBiome)
+    {
+        tilemapRenderer.DrawMountains(result.elevationMap, parentBiome, result.startX, result.startY);
     }
 
     public void PlaceObjects(List<ObjectData> objectList, BiomeBehaviour parentBiome)

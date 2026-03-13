@@ -1,25 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [System.Serializable]
 public class BiomeCharacteristics
 {
     [SerializeField] private string biomeName;
-    [SerializeField] private Texture2D defaultTurf;
-    [SerializeField] private Texture2D mountainLevel1Turf;
-    [SerializeField] private Texture2D mountainLevel2Turf;
-    [SerializeField] private Texture2D mountainLevel3Turf;
-    [SerializeField] private Texture2D lakeTurf;
+    [SerializeField] private TileBase defaultTurf;
+    [SerializeField] private TileBase mountainLevel1Turf;
+    [SerializeField] private TileBase mountainLevel2Turf;
+    [SerializeField] private TileBase mountainLevel3Turf;
+    [SerializeField] private TileBase lakeTurf;
+
+    [SerializeField] private Texture2D baseTexture;
 
     public string BiomeName => biomeName;
 
-    public Texture2D GetDefaultTurf()
+    public TileBase GetDefaultTurf()
     {
         return defaultTurf;
     }
 
-    public Texture2D GetMountainTurf(int level)
+    public TileBase GetMountainTurf(int level)
     {
         switch(level)
         {
@@ -36,9 +39,14 @@ public class BiomeCharacteristics
         }
     }
 
-    public Texture2D GetLakeTurf()
+    public TileBase GetLakeTurf()
     {
         return lakeTurf;
+    }
+
+    public Texture2D GetBaseTexture()
+    {
+        return baseTexture;
     }
 }
 

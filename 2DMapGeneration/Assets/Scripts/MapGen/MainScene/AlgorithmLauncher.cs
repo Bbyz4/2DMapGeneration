@@ -115,10 +115,11 @@ public class AlgorithmLauncher : MonoBehaviour
         IMountainGenerator generator = CreateMountainGenInstance(ID, gameObject);
 
         generator.Initialize(args);
-        List<MountainData> result = generator.Generate(biome.GetData());
+        MountainGeneratorResult result = generator.Generate(biome.GetData());
 
         GameObject.FindWithTag("UILoader").GetComponent<UILoader>().HideMountainGeneratorPopup();    
-        GameObject.FindWithTag("ObjectPlacer").GetComponent<ObjectPlacer>().PlaceMountains(result, biome);
+        //GameObject.FindWithTag("ObjectPlacer").GetComponent<ObjectPlacer>().PlaceMountains(result, biome);
+        GameObject.FindWithTag("ObjectPlacer").GetComponent<ObjectPlacer>().PlaceMountainsFromElevationMap(result, biome);
 
         Destroy((MonoBehaviour)generator);
     }

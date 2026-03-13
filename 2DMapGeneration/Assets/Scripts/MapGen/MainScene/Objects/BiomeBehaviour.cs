@@ -71,7 +71,7 @@ public class BiomeBehaviour : MonoBehaviour, IPointerDownHandler
             biomeChars = newBiomeChars;
 
             MeshRenderer renderer = GetComponent<MeshRenderer>();
-            renderer.material.mainTexture = biomeChars.GetDefaultTurf();
+            renderer.material.mainTexture = biomeChars.GetBaseTexture();
 
         }
     }

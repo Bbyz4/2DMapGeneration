@@ -157,7 +157,7 @@ private List<Vector2Int> FloodFill(
         }
     }
 
-    public List<MountainData> Generate(BiomeData biome)
+    public MountainGeneratorResult Generate(BiomeData biome)
     {
         List<MountainData> result = new List<MountainData>();
 
@@ -218,37 +218,14 @@ private List<Vector2Int> FloodFill(
             }
         }
 
-        // 2. Extract connected regions
-        for(int x = 0; x < width; x++)
+        MountainGeneratorResult mgr = new MountainGeneratorResult
         {
-            for(int y = 0; y < height; y++)
-            {
-                if(visited[x, y])
-                    continue;
+            elevationMap = elevationMap,
+            startX = 0,
+            startY = 0,
+        };
 
-                int level = elevationMap[x, y];
-
-                // Ignore flat land
-                if(level == 0)
-                {
-                    visited[x, y] = true;
-                    continue;
-                }
-
-                List<Vector2Int> region = FloodFill(
-                    x, y, level, elevationMap, visited);
-
-                MountainData mountain = new MountainData
-                {
-                    elevationLevel = level,
-                    outline = BuildOutline(region)
-                };
-
-                result.Add(mountain);
-            }
-        }
-
-        return result;
+        return mgr;
     }
 
     public void Initialize(IMountainGeneratorArgs args)

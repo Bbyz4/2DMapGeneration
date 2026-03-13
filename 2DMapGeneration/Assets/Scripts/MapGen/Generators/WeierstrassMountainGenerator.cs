@@ -72,7 +72,7 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
         }
     }
 
-    public List<MountainData> Generate(BiomeData biome)
+    public MountainGeneratorResult Generate(BiomeData biome)
     {
         Rect bounds = OutlineUtils.GetBoundingRect(biome.outline);
 
@@ -106,26 +106,13 @@ public class WeierstrassMountainGenerator : MonoBehaviour, IMountainGenerator
             }
         }
 
-        List<MountainData> result = GeneratorUtils.BuildMountainOutlines(elevationMap, width, height, (int)bounds.xMin, (int)bounds.yMin);
-    
-        List<MountainData> filtered = new List<MountainData>();
-
-        foreach (MountainData md in result)
+        MountainGeneratorResult mgr = new MountainGeneratorResult
         {
-            List<List<Vector2>> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biome.outline);
+            elevationMap = elevationMap,
+        startX = Mathf.FloorToInt(bounds.xMin),
+        startY = Mathf.FloorToInt(bounds.yMin),
+        };
 
-            if (clipped != null)
-            {
-                foreach(List<Vector2> newOutline in clipped)
-                {
-                    MountainData newMD = new MountainData();
-                    newMD.outline = newOutline;
-                    newMD.elevationLevel = md.elevationLevel;
-                    filtered.Add(newMD);
-                }
-            }
-        }
-
-        return filtered;
+        return mgr;
     }
 }

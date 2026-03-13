@@ -21,7 +21,7 @@ public class PerlinMountainGenerator : MonoBehaviour, IMountainGenerator
         this.args = (PerlinMountainGeneratorArgs)args;
     }
 
-    public List<MountainData> Generate(BiomeData biome)
+    public MountainGeneratorResult Generate(BiomeData biome)
     {
         Rect bounds = OutlineUtils.GetBoundingRect(biome.outline);
 
@@ -43,33 +43,13 @@ public class PerlinMountainGenerator : MonoBehaviour, IMountainGenerator
             }
         }
 
-        List<MountainData> result = GeneratorUtils.BuildMountainOutlines(elevationMap, width, height, (int)bounds.xMin, (int)bounds.yMin);
-
-        List<Vector2> biomeOutlineNoBorder = OutlineUtils.CutOutlineBorder(biome.outline, 2);
-
-        if(biomeOutlineNoBorder == null)
+        MountainGeneratorResult mgr = new MountainGeneratorResult
         {
-            Debug.Log("A");
-        }
+            elevationMap = elevationMap,
+            startX = Mathf.FloorToInt(bounds.xMin),
+            startY = Mathf.FloorToInt(bounds.yMin),
+        };
 
-        List<MountainData> filtered = new List<MountainData>();
-
-        foreach (MountainData md in result)
-        {
-            List<List<Vector2>> clipped = OutlineUtils.GetOutlinesIntersection(md.outline, biomeOutlineNoBorder);
-
-            if (clipped != null)
-            {
-                foreach(List<Vector2> newOutline in clipped)
-                {
-                    MountainData newMD = new MountainData();
-                    newMD.outline = newOutline;
-                    newMD.elevationLevel = md.elevationLevel;
-                    filtered.Add(newMD);
-                }
-            }
-        }
-
-        return filtered;
+        return mgr;
     }
 }
