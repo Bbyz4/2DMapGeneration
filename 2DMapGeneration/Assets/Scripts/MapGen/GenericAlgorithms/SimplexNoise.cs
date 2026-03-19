@@ -25,16 +25,18 @@ public class SimplexNoise
         new Vector2(0.9239f,-0.3827f)
     };
 
+    private int seed;
     private float multiplier;
 
-    public SimplexNoise(float multiplier)
+    public SimplexNoise(int seed, float multiplier)
     {
+        this.seed = seed;
         this.multiplier = multiplier;
     }
 
     private int Hash(int x, int y)
     {
-        int h = x * 374761393 + y * 668265263; // duże liczby pierwsze
+        int h = x * 374761393 + y * 668265263 + seed * 1013904223; // duże liczby pierwsze
         h = (h ^ (h >> 13)) * 1274126177;
         return h ^ (h >> 16);
     }

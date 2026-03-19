@@ -5,7 +5,6 @@ using System;
 public class SimplexMountainGenerator : MonoBehaviour, IMountainGenerator
 {
     private SimplexMountainGeneratorArgs args;
-    private SimplexNoise noise;
 
     private int Classify(float h)
     {
@@ -28,7 +27,13 @@ public class SimplexMountainGenerator : MonoBehaviour, IMountainGenerator
         int width = (int)(bounds.xMax - bounds.xMin);
         int height = (int)(bounds.yMax - bounds.yMin);
 
-        noise = new SimplexNoise(70f);
+        List<SimplexNoise> noiseList = new List<SimplexNoise>();
+
+        for(int i=0; i<args.octaves; i++)
+        {
+            int randomSeed = UnityEngine.Random.Range(int.MinValue+1, int.MaxValue-1);
+            noiseList.Add(new SimplexNoise(randomSeed, 70f));
+        }
 
         int[,] elevationMap = new int[width, height];
 
@@ -37,8 +42,23 @@ public class SimplexMountainGenerator : MonoBehaviour, IMountainGenerator
         {
             for(int y = 0; y < height; y++)
             {
-                float h = noise.Sample(x * args.scale, y * args.scale);
-                elevationMap[x, y] = Classify(h);
+                float total = 0f;
+                float amplitude = 1f;
+                float frequency = 1f;
+                float maxValue = 0f;
+
+                for(int i=0; i<args.octaves; i++)
+                {
+                    float h = noiseList[i].Sample(x * args.scale * frequency, y * args.scale * frequency);
+
+                    total += h * amplitude;
+                    maxValue += amplitude;
+
+                    frequency *= args.frequencyMultiplier;
+                    amplitude *= args.amplitudeMultiplier;
+                }
+
+                elevationMap[x, y] = Classify(total/maxValue);
             }
         }
 
