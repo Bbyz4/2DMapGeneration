@@ -17,7 +17,8 @@ public class MountainGeneratorPopup : MonoBehaviour
         {"Perlin Noise", 0},
         {"WFC", 1},
         {"Weierstrass", 2},
-        {"Simplex Noise", 3}  
+        {"Simplex Noise", 3},
+        {"Cellular Automata", 4}
     };
     public void InitializeForGivenBiome(BiomeBehaviour biomeBeh)
     {
