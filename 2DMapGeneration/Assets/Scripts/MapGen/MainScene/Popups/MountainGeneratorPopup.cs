@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,13 @@ public class MountainGeneratorPopup : MonoBehaviour
         argumentCollector = GameObject.FindWithTag("ArgumentCollector").GetComponent<ArgumentCollector>();
     }
 
+    private Dictionary<string,int> algNameToID = new Dictionary<string, int>()
+    {
+        {"Perlin Noise", 0},
+        {"WFC", 1},
+        {"Weierstrass", 2},
+        {"Simplex Noise", 3}  
+    };
     public void InitializeForGivenBiome(BiomeBehaviour biomeBeh)
     {
         foreach(Transform child in transform)
@@ -27,11 +35,11 @@ public class MountainGeneratorPopup : MonoBehaviour
                 continue;
             }
 
-            if (int.TryParse(tmpText.text, out int parsedValue))
+            if (algNameToID.ContainsKey(tmpText.text))
             {
                 button.onClick.RemoveAllListeners();
 
-                int capturedValue = parsedValue;
+                int capturedValue = algNameToID[tmpText.text];
 
                 button.onClick.AddListener(() =>
                 {

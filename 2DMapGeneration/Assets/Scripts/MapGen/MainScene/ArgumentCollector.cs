@@ -23,6 +23,8 @@ public class ArgumentCollector : MonoBehaviour
     [SerializeField] private GameObject booleanInputPrefab;
     [SerializeField] private GameObject submitButtonPrefab;
 
+    [SerializeField] private GameObject scrollViewObject;
+
 
     private Dictionary<FieldInfo, GameObject> spawnedInputs;
     private GameObject spawnedSubmitButton;
@@ -54,6 +56,8 @@ public class ArgumentCollector : MonoBehaviour
     {
         ClearUI();
 
+        scrollViewObject.SetActive(true);
+
         FieldInfo[] fields = argsType.GetFields();
 
         float currentX = 850f;
@@ -70,11 +74,11 @@ public class ArgumentCollector : MonoBehaviour
             //ugly, add a dictionary later
             if(field.FieldType == typeof(int) || field.FieldType == typeof(float))
             {
-                spawned = Instantiate(numberInputPrefab, new Vector3(currentX, currentY, 0f), Quaternion.identity, formParent);
+                spawned = Instantiate(numberInputPrefab, formParent);
             }
             else if(field.FieldType == typeof(bool))
             {
-                spawned = Instantiate(booleanInputPrefab, new Vector3(currentX, currentY, 0f), Quaternion.identity, formParent);
+                spawned = Instantiate(booleanInputPrefab, formParent);
             }
 
             if(spawned != null)
@@ -123,6 +127,8 @@ public class ArgumentCollector : MonoBehaviour
 
     private void OnSubmit(Type argsType, int biomeAlgID, ArgumentCollectingFormType type, BiomeBehaviour biomeBeh, int generatedObjectID)
     {
+        scrollViewObject.SetActive(false);
+
         switch(type)
         {
             case ArgumentCollectingFormType.BIOME:

@@ -147,7 +147,6 @@ public class WFCMountainGenerator : MonoBehaviour, IMountainGenerator
             }
         }
 
-        //Randomizing the result, so that the priority queue approach simulates a uniformly random one
         for(int i = result.Count - 1; i > 0; i--)
         {
             int j = UnityEngine.Random.Range(0, i + 1);

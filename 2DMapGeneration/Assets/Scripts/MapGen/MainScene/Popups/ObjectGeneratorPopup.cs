@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,11 @@ public class ObjectGeneratorPopup : MonoBehaviour
     {
         argumentCollector = GameObject.FindWithTag("ArgumentCollector").GetComponent<ArgumentCollector>();
     }
+
+    private Dictionary<string,int> algNameToID = new Dictionary<string, int>()
+    {
+        {"Poisson sampling", 0}
+    };
 
     public void InitializeForGivenBiome(BiomeBehaviour biomeBeh, int generatedObjectID)
     {
@@ -27,11 +33,11 @@ public class ObjectGeneratorPopup : MonoBehaviour
                 continue;
             }
 
-            if (int.TryParse(tmpText.text, out int parsedValue))
+            if (algNameToID.ContainsKey(tmpText.text))
             {
                 button.onClick.RemoveAllListeners();
 
-                int capturedValue = parsedValue;
+                int capturedValue = algNameToID[tmpText.text];
 
                 button.onClick.AddListener(() =>
                 {
